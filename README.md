@@ -1,2 +1,2 @@
 # DatabaseManagementProjects
-This is the repository holding all Database Management Project directories.
+This is the parent repository holding all Database Management Project directories.
