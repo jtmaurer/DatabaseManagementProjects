@@ -14,6 +14,7 @@ import java.util.function.*;
 import java.util.stream.*;
 
 import static java.lang.Boolean.*;
+import static java.lang.StringTemplate.STR;
 import static java.lang.System.arraycopy;
 import static java.lang.System.out;
 
@@ -313,6 +314,8 @@ public class Table
      * compatible.
      *
      * #usage movie.minus (show)
+     * 
+     * @author Heeya Jolly
      *
      * @param table2  The rhs table in the minus operation
      * @return  a table representing the difference
@@ -324,7 +327,11 @@ public class Table
 
         List <Comparable []> rows = new ArrayList <> ();
 
-        //  T O   B E   I M P L E M E N T E D 
+        for (var tup : tuples){
+            if (!table2.tuples.contains(tup)){
+                rows.add(tup);
+            }
+        } 
 
         return new Table (name + count++, attribute, domain, key, rows);
     } // minus
