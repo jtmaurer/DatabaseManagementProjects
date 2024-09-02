@@ -374,6 +374,8 @@ public class Table
      * attribute name. Implement using a NESTED LOOP JOIN ALGORITHM.
      *
      * #usage movie.join ("studioName", "name", studio)
+     * 
+     * @author Jason Maurer
      *
      * @param attributes1 the attributes of this table to be compared (Foreign
      * Key)
@@ -432,6 +434,8 @@ public class Table
      * Op may include: ==, !=, <, <=, >, >=
      *
      * #usage movie.join ("studioName == name", studio)
+     * 
+     * @author Jason Maurer
      *
      * @param condition the theta join condition
      * @param table2 the rhs table in the join operation
@@ -495,6 +499,8 @@ public class Table
      * duplicate column is also eliminated.
      *
      * #usage movieStar.join (starsIn)
+     * 
+     * @author Jason Maurer
      *
      * @param table2 the rhs table in the join operation
      * @return a table with tuples satisfying the equality predicate
