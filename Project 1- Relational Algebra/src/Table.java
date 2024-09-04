@@ -82,8 +82,8 @@ public class Table
         case NO_MAP      -> null;
         case TREE_MAP    -> new TreeMap <> ();
         case HASH_MAP    -> new HashMap <> ();
-        case LINHASH_MAP -> new LinHashMap <> (KeyType.class, Comparable [].class);
-        case BPTREE_MAP  -> new BpTreeMap <> (KeyType.class, Comparable [].class);
+        // case LINHASH_MAP -> new LinHashMap <> (KeyType.class, Comparable [].class);
+        // case BPTREE_MAP  -> new BpTreeMap <> (KeyType.class, Comparable [].class);
         default          -> null;
         }; // switch
     } // makeMap
