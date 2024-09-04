@@ -304,6 +304,12 @@ public class Table
         List <Comparable []> rows = new ArrayList <> ();
 
         //  T O   B E   I M P L E M E N T E D 
+        for (int i = 0; i < table2.tuples.size(); i++) {
+            rows.add(table2.tuples.get(i));
+        }
+        for (int i = 0; i < this.tuples.size(); i++) {
+            rows.add(this.tuples.get(i));
+        }
 
         return new Table (name + count++, attribute, domain, key, rows);
     } // union
