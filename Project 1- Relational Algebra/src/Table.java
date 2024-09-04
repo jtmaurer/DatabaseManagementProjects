@@ -93,12 +93,16 @@ public class Table
      */
     private static Map<KeyType, Comparable[]> makeMap() {
         return switch (mType) {
-        case NO_MAP      -> null;
-        case TREE_MAP    -> new TreeMap <> ();
-        case HASH_MAP    -> new HashMap <> ();
-        //case LINHASH_MAP -> new LinHashMap <> (KeyType.class, Comparable [].class);
-        //case BPTREE_MAP  -> new BpTreeMap <> (KeyType.class, Comparable [].class);
-        default          -> null;
+            case NO_MAP ->
+                null;
+            case TREE_MAP ->
+                new TreeMap<>();
+            case HASH_MAP ->
+                new HashMap<>();
+            //case LINHASH_MAP -> new LinHashMap <> (KeyType.class, Comparable [].class);
+            //case BPTREE_MAP  -> new BpTreeMap <> (KeyType.class, Comparable [].class);
+            default ->
+                null;
         }; // switch
     } // makeMap
 
@@ -186,7 +190,7 @@ public class Table
      * attributes. Check whether the original key is included in the projection.
      *
      * @author Curt Leonard
-     * 
+     *
      * #usage movie.project ("title year studioNo")
      *
      * @param attributes the attributes to project onto
@@ -200,12 +204,11 @@ public class Table
 
         List<Comparable[]> rows = new ArrayList<>();
 
-
         for (var t : tuples) {
-            rows.add (extract (t, attrs)); // extracts the elements of each row that match the attributes specifies by the user 
+            rows.add(extract(t, attrs)); // extracts the elements of each row that match the attributes specifies by the user 
         }
 
-        return new Table (name + count++, attrs, colDomain, newKey, rows); // returns a new table with the project function applied 
+        return new Table(name + count++, attrs, colDomain, newKey, rows); // returns a new table with the project function applied 
     } // project
 
     /**
@@ -232,16 +235,14 @@ public class Table
      *
      * #usage movie.select ("year == 1977")
      *
-     *  
-     * @param condition  the check condition as a string for tuples
-     * @return  a table with tuples satisfying the condition
+     *
+     * @param condition the check condition as a string for tuples
+     * @return a table with tuples satisfying the condition
      */
     public Table select(String condition) {
         out.println(STR."RA> \{name}.select (\{condition})");
 
         List<Comparable[]> rows = new ArrayList<>();
-
-        //  T O   B E   I M P L E M E N T E D
 
         var token = condition.split(" ");
         var colNo = col(token[0]);
@@ -353,7 +354,7 @@ public class Table
             rows.add(this.tuples.get(i));
         }
 
-        return new Table (name + count++, attribute, domain, key, rows);
+        return new Table(name + count++, attribute, domain, key, rows);
     } // union
 
     /**
@@ -362,7 +363,7 @@ public class Table
      * are compatible.
      *
      * #usage movie.minus (show)
-     * 
+     *
      * @author Heeya Jolly
      *
      * @param table2 The rhs table in the minus operation
@@ -376,13 +377,13 @@ public class Table
 
         List<Comparable[]> rows = new ArrayList<>();
 
-        for (var tup : tuples){
-            if (!table2.tuples.contains(tup)){
+        for (var tup : tuples) {
+            if (!table2.tuples.contains(tup)) {
                 rows.add(tup);
             }
-        } 
+        }
 
-        return new Table (name + count++, attribute, domain, key, rows);
+        return new Table(name + count++, attribute, domain, key, rows);
     } // minus
 
     /**
@@ -393,7 +394,7 @@ public class Table
      * attribute name. Implement using a NESTED LOOP JOIN ALGORITHM.
      *
      * #usage movie.join ("studioName", "name", studio)
-     * 
+     *
      * @author Jason Maurer
      *
      * @param attributes1 the attributes of this table to be compared (Foreign
@@ -432,15 +433,21 @@ public class Table
             }
         }
 
+        String[] table_2_modified_attributes = new String[table2.attribute.length];
+        System.arraycopy(table2.attribute, 0, table_2_modified_attributes, 0, table2.attribute.length);
+
+        String[] temp_table_1_attributes = this.attribute;
+
         //Modifies table 2 attributes to append '2' to duplicate-named attribute
-        for (int i = 0; i < t_attrs.length; i++) {
-            if (t_attrs[i].compareTo(u_attrs[i]) == 0) {
-                int column_of_duplicate = table2.col(u_attrs[i]);
-                table2.attribute[column_of_duplicate] = table2.attribute[column_of_duplicate] + "2";
+        for (int i = 0; i < this.attribute.length; i++) {
+            for (int k = 0; k < table_2_modified_attributes.length; k++) {
+                if (this.attribute[i].compareTo(table_2_modified_attributes[k]) == 0) {
+                    table_2_modified_attributes[k] = table_2_modified_attributes[k] + "2";
+                }
             }
         }
 
-        return new Table(name + count++, concat(attribute, table2.attribute),
+        return new Table(name + count++, concat(temp_table_1_attributes, table_2_modified_attributes),
                 concat(domain, table2.domain), key, rows);
     } // join
 
@@ -449,11 +456,11 @@ public class Table
      * Join this table and table2 by performing a "theta-join". Tuples from both
      * tables are compared attribute1 <op> attribute2. Disambiguate attribute
      * names by appending "2" to the end of any duplicate attribute name.
-     * Implement using a Nested Loop Join algorithm.
-     * Op may include: ==, !=, <, <=, >, >=
+     * Implement using a Nested Loop Join algorithm. Op may include: ==, !=, <, <=,
+     * >, >=
      *
      * #usage movie.join ("studioName == name", studio)
-     * 
+     *
      * @author Jason Maurer
      *
      * @param condition the theta join condition
@@ -484,12 +491,22 @@ public class Table
             }
         }
 
+        String[] table_2_modified_attributes = new String[table2.attribute.length];
+        System.arraycopy(table2.attribute, 0, table_2_modified_attributes, 0, table2.attribute.length);
+
+        //Temporary arrays so concat works
+        String[] table_1_temp_attributes = this.attribute;
+
         //Modifies table 2 attributes to append '2' to duplicate-named attribute
-        if (this.attribute[table_1_column].compareTo(table2.attribute[table_2_column]) == 0) {
-            table2.attribute[table_2_column] = table2.attribute[table_2_column] + "2";
+        for (int i = 0; i < this.attribute.length; i++) {
+            for (int k = 0; k < table_2_modified_attributes.length; k++) {
+                if (this.attribute[i].compareTo(table_2_modified_attributes[k]) == 0) {
+                    table_2_modified_attributes[k] = table_2_modified_attributes[k] + "2";
+                }
+            }
         }
 
-        return new Table(name + count++, concat(attribute, table2.attribute),
+        return new Table(name + count++, concat(table_1_temp_attributes, table_2_modified_attributes),
                 concat(domain, table2.domain), key, rows);
     } // join
 
@@ -518,7 +535,7 @@ public class Table
      * duplicate column is also eliminated.
      *
      * #usage movieStar.join (starsIn)
-     * 
+     *
      * @author Jason Maurer
      *
      * @param table2 the rhs table in the join operation
@@ -533,6 +550,7 @@ public class Table
         List<String> commonAttributesList = new ArrayList<>();
         List<String> table_2_condensed_attributes_List = new ArrayList<>();
 
+        //Get common attributes between two tables
         for (int i = 0; i < this.attribute.length; i++) {
             String temp_attr = this.attribute[i];
             for (int j = 0; j < table2.attribute.length; j++) {
@@ -542,6 +560,7 @@ public class Table
             }
         }
 
+        //Create new attribute list for table 2, that does not include duplicate attributes
         for (int i = 0; i < table2.attribute.length; i++) {
             String tempAttr = table2.attribute[i];
             if (!commonAttributesList.contains(tempAttr) && !table_2_condensed_attributes_List.contains(tempAttr)) {
@@ -561,19 +580,30 @@ public class Table
             Comparable[] tuple_t = this.tuples.get(i);
             for (int j = 0; j < table2.tuples.size(); j++) {
                 Comparable[] tuple_u = table2.tuples.get(j);
-                if (tuple_t[t_attrs_columns[0]].compareTo(tuple_u[u_attrs_columns[0]]) == 0) {
+                boolean matching = true;
+                for (int k = 0; k < t_attrs_columns.length; k++) {
+                    if (!(tuple_t[t_attrs_columns[k]].compareTo(tuple_u[u_attrs_columns[k]]) == 0)) {
+                        matching = false;
+                        break;
+                    }
+                }
+                if (matching) {
                     Comparable[] condensed_tuple_u = extract(tuple_u, table_2_condensed_attributes);
                     Comparable[] new_tuple = concat(tuple_t, condensed_tuple_u);
-
                     rows.add(new_tuple);
                 }
             }
         }
 
-        Class[] table_2_condensed_domains = extractDom(match(table_2_condensed_attributes), table2.domain);
+        //Get condensed domains for new attributes
+        Class[] table_2_condensed_domains = table2.extractDom(table2.match(table_2_condensed_attributes), table2.domain);
 
-        return new Table(name + count++, concat(attribute, table_2_condensed_attributes),
-                concat(domain, table_2_condensed_domains), key, rows);
+        //Temporary arrays so concat works
+        Class[] table_1_temp_domain = this.domain;
+        String[] table_1_temp_attributes = this.attribute;
+
+        return new Table(name + count++, concat(table_1_temp_attributes, table_2_condensed_attributes),
+                concat(table_1_temp_domain, table_2_condensed_domains), key, rows);
     } // join
 
     /**
@@ -769,10 +799,10 @@ public class Table
      * **********************************************************************************
      * Extract the attributes specified by the column array from tuple t.
      *
-     * 
-     * @param t       the tuple to extract from
-     * @param column  the array of column names
-     * @return  a smaller tuple extracted from tuple t 
+     *
+     * @param t the tuple to extract from
+     * @param column the array of column names
+     * @return a smaller tuple extracted from tuple t
      */
     private Comparable[] extract(Comparable[] t, String[] column) {
         var tup = new Comparable[column.length];
@@ -789,14 +819,12 @@ public class Table
      * type of each value to ensure it is from the right domain.
      *
      * @author Curt Leonard
-     * 
-     * @param t  the tuple as a array of attribute values
-     * @return  whether the tuple has the right size and values that comply
-     *          with the given domains
+     *
+     * @param t the tuple as a array of attribute values
+     * @return whether the tuple has the right size and values that comply with
+     * the given domains
      */
-    private boolean typeCheck (Comparable [] t)
-    { 
-       
+    private boolean typeCheck(Comparable[] t) {
 
         if (t.length != domain.length) { // If the number of values in the tuple is longer or shorter than the domain 
             System.out.println("tuple length is not the same as the domain");
@@ -804,9 +832,9 @@ public class Table
         }
 
         for (int i = 0; i < t.length; i++) { // iterating through the tuple
-            
+
             if (t[i].getClass() != domain[i]) { // if the class of the element does not match the class that it should be 
-                
+
                 System.out.println("The class of the element is: " + t[i].getClass());
                 System.out.println("The class that it should be is: " + domain[i]);
                 return false;
