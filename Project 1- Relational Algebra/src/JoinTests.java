@@ -91,6 +91,14 @@ class JoinTests
         var t_join = movie.join ("studioName", "name", studio);
         t_join.print ();
 
+        //--------------------- equi-join: movie JOIN studio ON studioName = name
+        
+        out.println ();
+        movie.print();
+        cinema.print();
+        var t_join5 = movie.join("title year", "title year", cinema);
+        t_join5.print ();
+
         //--------------------- natural join: movie JOIN studio - removes duplicate columns
 
         out.println ();
@@ -115,6 +123,8 @@ class JoinTests
         cinema.print();
         var t_join4 = movie.join("year > year", cinema);
         t_join4.print ();
+
+
 
     } // main
 

@@ -433,14 +433,17 @@ public class Table
             }
         }
 
-        String[] table_2_modified_attributes = table2.attribute;
+        String[] table_2_modified_attributes = new String[table2.attribute.length];
+        System.arraycopy(table2.attribute, 0, table_2_modified_attributes, 0, table2.attribute.length);
+
         String[] temp_table_1_attributes = this.attribute;
 
         //Modifies table 2 attributes to append '2' to duplicate-named attribute
-        for (int i = 0; i < t_attrs.length; i++) {
-            if (t_attrs[i].compareTo(u_attrs[i]) == 0) {
-                int column_of_duplicate = table2.col(u_attrs[i]);
-                table_2_modified_attributes[column_of_duplicate] = table_2_modified_attributes[column_of_duplicate] + "2";
+        for (int i = 0; i < this.attribute.length; i++) {
+            for (int k = 0; k < table_2_modified_attributes.length; k++) {
+                if (this.attribute[i].compareTo(table_2_modified_attributes[k]) == 0) {
+                    table_2_modified_attributes[k] = table_2_modified_attributes[k] + "2";
+                }
             }
         }
 
@@ -488,14 +491,19 @@ public class Table
             }
         }
 
-        String[] table_2_modified_attributes = table2.attribute;
-        
-         //Temporary arrays so concat works
+        String[] table_2_modified_attributes = new String[table2.attribute.length];
+        System.arraycopy(table2.attribute, 0, table_2_modified_attributes, 0, table2.attribute.length);
+
+        //Temporary arrays so concat works
         String[] table_1_temp_attributes = this.attribute;
 
         //Modifies table 2 attributes to append '2' to duplicate-named attribute
-        if (this.attribute[table_1_column].compareTo(table_2_modified_attributes[table_2_column]) == 0) {
-            table_2_modified_attributes[table_2_column] = table_2_modified_attributes[table_2_column] + "2";
+        for (int i = 0; i < this.attribute.length; i++) {
+            for (int k = 0; k < table_2_modified_attributes.length; k++) {
+                if (this.attribute[i].compareTo(table_2_modified_attributes[k]) == 0) {
+                    table_2_modified_attributes[k] = table_2_modified_attributes[k] + "2";
+                }
+            }
         }
 
         return new Table(name + count++, concat(table_1_temp_attributes, table_2_modified_attributes),
