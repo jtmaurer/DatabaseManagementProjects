@@ -121,6 +121,21 @@ class MovieDB
         var t_select3 = movie.select ("year < 1980");
         t_select3.print ();
 
+        //--------------------- select (condition): ==
+        out.println ();
+        var t_select4 = movie.select ("year == 1977");
+        t_select4.print ();
+
+        //--------------------- select (condition): <=
+        out.println ();
+        var t_select5 = movie.select ("length <= 124");
+        t_select5.print ();
+
+        //--------------------- select (condition): >
+        out.println ();
+        var t_select6 = movie.select ("length > 124");
+        t_select6.print ();
+
         //--------------------- indexed select: key
 
         out.println ();

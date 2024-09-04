@@ -4,8 +4,8 @@
  *
  * @author   John Miller
  *
- * compile javac --enable-preview --release 21 *.java
- * run     java --enable-preview MovieDB    
+ * compile  From the directory Project1- Relational Algebra run the command $ ./compile.sh
+ * run      From the directory Project1- Relational Algebra run the command $ ./run.sh
  */
 
 import java.io.*;
@@ -82,8 +82,8 @@ public class Table
         case NO_MAP      -> null;
         case TREE_MAP    -> new TreeMap <> ();
         case HASH_MAP    -> new HashMap <> ();
-        case LINHASH_MAP -> new LinHashMap <> (KeyType.class, Comparable [].class);
-        case BPTREE_MAP  -> new BpTreeMap <> (KeyType.class, Comparable [].class);
+        //case LINHASH_MAP -> new LinHashMap <> (KeyType.class, Comparable [].class);
+        //case BPTREE_MAP  -> new BpTreeMap <> (KeyType.class, Comparable [].class);
         default          -> null;
         }; // switch
     } // makeMap
@@ -212,6 +212,7 @@ public class Table
      *
      * #usage movie.select ("year == 1977")
      *
+     *  
      * @param condition  the check condition as a string for tuples
      * @return  a table with tuples satisfying the condition
      */
@@ -222,7 +223,6 @@ public class Table
         List <Comparable []> rows = new ArrayList <> ();
 
         //  T O   B E   I M P L E M E N T E D
-
         var token = condition.split (" ");
         var colNo = col (token [0]);
         for (var t : tuples) {
