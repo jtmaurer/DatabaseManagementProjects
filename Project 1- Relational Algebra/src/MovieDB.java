@@ -99,8 +99,34 @@ class MovieDB
         //--------------------- project: title year
 
         out.println ();
-        var t_project = movie.project ("title year");
-        t_project.print ();
+        var t_project1 = movie.project ("title year");
+        t_project1.print ();
+
+         //--------------------- project: producerNo year
+
+         out.println ();
+         var t_project2 = cinema.project ("producerNo year");
+         t_project2.print ();
+
+          //--------------------- project: name birthdate
+
+        out.println ();
+        var t_project3 = movieStar.project ("name birthdate");
+        t_project3.print ();
+
+
+         //--------------------- project: starName
+
+         out.println ();
+         var t_project4 = starsIn.project ("starName");
+         t_project4.print ();
+
+
+          //--------------------- project: presNo name
+
+        out.println ();
+        var t_project5 = studio.project ("presNo name");
+        t_project5.print ();
 
         //--------------------- select: equals, &&
 
