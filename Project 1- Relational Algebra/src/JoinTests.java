@@ -1,18 +1,16 @@
 
 /*****************************************************************************************
- * @file  MovieDB.java
+ * @file  JoinTests.java
  *
- * @author   John Miller
+ * @author   Jason MAurer
  */
 
 import static java.lang.System.out;
 
 /*****************************************************************************************
- * The MovieDB class makes a Movie Database.  It serves as a template for making other
- * databases.  See "Database Systems: The Complete Book", second edition, page 26 for more
- * information on the Movie Database schema.
+ * 
  */
-class MovieDB
+class JoinTests
 {
     /*************************************************************************************
      * Main method for creating, populating and querying a Movie Database.
@@ -50,14 +48,14 @@ class MovieDB
         movie.insert (film1);
         movie.insert (film2);
         movie.insert (film3);
-        movie.print ();
+        // movie.print ();
 
         var film4 = new Comparable [] { "Galaxy_Quest", 1999, 104, "comedy", "DreamWorks", 67890 };
         out.println ();
         cinema.insert (film2);
         cinema.insert (film3);
         cinema.insert (film4);
-        cinema.print ();
+        // cinema.print ();
 
         var star0 = new Comparable [] { "Carrie_Fisher", "Hollywood", 'F', "9/9/99" };
         var star1 = new Comparable [] { "Mark_Hamill", "Brentwood", 'M', "8/8/88" };
@@ -66,17 +64,17 @@ class MovieDB
         movieStar.insert (star0);
         movieStar.insert (star1);
         movieStar.insert (star2);
-        movieStar.print ();
+        // movieStar.print ();
 
         var cast0 = new Comparable [] { "Star_Wars", 1977, "Carrie_Fisher" };
         out.println ();
         starsIn.insert (cast0);
-        starsIn.print ();
+        // starsIn.print ();
 
         var exec0 = new Comparable [] { 9999, "S_Spielberg", "Hollywood", 10000.00 };
         out.println ();
         movieExec.insert (exec0);
-        movieExec.print ();
+        // movieExec.print ();
 
         var studio0 = new Comparable [] { "Fox", "Los_Angeles", 7777 };
         var studio1 = new Comparable [] { "Universal", "Universal_City", 8888 };
@@ -85,100 +83,7 @@ class MovieDB
         studio.insert (studio0);
         studio.insert (studio1);
         studio.insert (studio2);
-        studio.print ();
-
-        movie.save ();
-        cinema.save ();
-        movieStar.save ();
-        starsIn.save ();
-        movieExec.save ();
-        studio.save ();
-
-        movieStar.printIndex ();
-
-        //--------------------- project: title year
-
-        out.println ();
-        var t_project1 = movie.project ("title year");
-        t_project1.print ();
-
-         //--------------------- project: producerNo year
-
-         out.println ();
-         var t_project2 = cinema.project ("producerNo year");
-         t_project2.print ();
-
-          //--------------------- project: name birthdate
-
-        out.println ();
-        var t_project3 = movieStar.project ("name birthdate");
-        t_project3.print ();
-
-
-         //--------------------- project: starName
-
-         out.println ();
-         var t_project4 = starsIn.project ("starName");
-         t_project4.print ();
-
-
-          //--------------------- project: presNo name
-
-        out.println ();
-        var t_project5 = studio.project ("presNo name");
-        t_project5.print ();
-
-        //--------------------- select: equals, &&
-
-        out.println ();
-        var t_select = movie.select (t -> t[movie.col("title")].equals ("Star_Wars") &&
-                                          t[movie.col("year")].equals (1977));
-        t_select.print ();
-
-        //--------------------- select: <
-
-        out.println ();
-        var t_select2 = movie.select (t -> (Integer) t[movie.col("year")] < 1980);
-        t_select2.print ();
-
-        //--------------------- select (condition): <
-
-        out.println ();
-        var t_select3 = movie.select ("year < 1980");
-        t_select3.print ();
-
-        //--------------------- select (condition): ==
-        out.println ();
-        var t_select4 = movie.select ("year == 1977");
-        t_select4.print ();
-
-        //--------------------- select (condition): <=
-        out.println ();
-        var t_select5 = movie.select ("length <= 124");
-        t_select5.print ();
-
-        //--------------------- select (condition): >
-        out.println ();
-        var t_select6 = movie.select ("length > 124");
-        t_select6.print ();
-
-        //--------------------- indexed select: key
-
-        out.println ();
-        var t_iselect = movieStar.select (new KeyType ("Harrison_Ford"));
-        t_iselect.print ();
-
-        //--------------------- union: movie UNION cinema
-
-        out.println ();
-        var t_union = movie.union (cinema);
-        t_union.print ();
-
-        //--------------------- minus: movie MINUS cinema
-
-        out.println ();
-        var t_minus = movie.minus (cinema);
-        t_minus.print ();
+        // studio.print ();
 
         //--------------------- equi-join: movie JOIN studio ON studioName = name
 
@@ -186,11 +91,30 @@ class MovieDB
         var t_join = movie.join ("studioName", "name", studio);
         t_join.print ();
 
-        //--------------------- natural join: movie JOIN studio
+        //--------------------- natural join: movie JOIN studio - removes duplicate columns
 
         out.println ();
+        movie.print();
+        cinema.print();
         var t_join2 = movie.join (cinema);
         t_join2.print ();
+
+        //--------------------- theta join: movie JOIN studio
+
+        out.println ();
+        movie.print();
+        studio.print();
+        var t_join3 = movie.join("studioName != name", studio);
+        t_join3.print ();
+
+        
+        //--------------------- theta join: movie JOIN cinema 
+
+        out.println ();
+        movie.print();
+        cinema.print();
+        var t_join4 = movie.join("year > year", cinema);
+        t_join4.print ();
 
     } // main
 
