@@ -4,8 +4,8 @@
  *
  * @author   John Miller
  *
- * compile javac --enable-preview --release 21 *.java
- * run     java --enable-preview MovieDB
+ * compile  From the directory Project1- Relational Algebra run the command $ ./compile.sh
+ * run      From the directory Project1- Relational Algebra run the command $ ./run.sh
  */
 import java.io.*;
 import java.util.*;
@@ -92,16 +92,12 @@ public class Table
      */
     private static Map<KeyType, Comparable[]> makeMap() {
         return switch (mType) {
-            case NO_MAP ->
-                null;
-            case TREE_MAP ->
-                new TreeMap<>();
-            case HASH_MAP ->
-                new HashMap<>();
-            //case LINHASH_MAP -> new LinHashMap <> (KeyType.class, Comparable [].class);
-            //case BPTREE_MAP  -> new BpTreeMap <> (KeyType.class, Comparable [].class);
-            default ->
-                null;
+        case NO_MAP      -> null;
+        case TREE_MAP    -> new TreeMap <> ();
+        case HASH_MAP    -> new HashMap <> ();
+        //case LINHASH_MAP -> new LinHashMap <> (KeyType.class, Comparable [].class);
+        //case BPTREE_MAP  -> new BpTreeMap <> (KeyType.class, Comparable [].class);
+        default          -> null;
         }; // switch
     } // makeMap
 
@@ -188,6 +184,8 @@ public class Table
      * Project the tuples onto a lower dimension by keeping only the given
      * attributes. Check whether the original key is included in the projection.
      *
+     * @author Curt Leonard
+     * 
      * #usage movie.project ("title year studioNo")
      *
      * @param attributes the attributes to project onto
@@ -201,8 +199,12 @@ public class Table
 
         List<Comparable[]> rows = new ArrayList<>();
 
-        //  T O   B E   I M P L E M E N T E D 
-        return new Table(name + count++, attrs, colDomain, newKey, rows);
+
+        for (var t : tuples) {
+            rows.add (extract (t, attrs)); // extracts the elements of each row that match the attributes specifies by the user 
+        }
+
+        return new Table (name + count++, attrs, colDomain, newKey, rows); // returns a new table with the project function applied 
     } // project
 
     /**
@@ -229,8 +231,9 @@ public class Table
      *
      * #usage movie.select ("year == 1977")
      *
-     * @param condition the check condition as a string for tuples
-     * @return a table with tuples satisfying the condition
+     *  
+     * @param condition  the check condition as a string for tuples
+     * @return  a table with tuples satisfying the condition
      */
     public Table select(String condition) {
         out.println(STR."RA> \{name}.select (\{condition})");
@@ -238,8 +241,10 @@ public class Table
         List<Comparable[]> rows = new ArrayList<>();
 
         //  T O   B E   I M P L E M E N T E D
+
         var token = condition.split(" ");
         var colNo = col(token[0]);
+
         for (var t : tuples) {
             if (satifies(t, colNo, token[1], token[2])) {
                 rows.add(t);
@@ -750,9 +755,10 @@ public class Table
      * **********************************************************************************
      * Extract the attributes specified by the column array from tuple t.
      *
-     * @param t the tuple to extract from
-     * @param column the array of column names
-     * @return a smaller tuple extracted from tuple t
+     * 
+     * @param t       the tuple to extract from
+     * @param column  the array of column names
+     * @return  a smaller tuple extracted from tuple t 
      */
     private Comparable[] extract(Comparable[] t, String[] column) {
         var tup = new Comparable[column.length];
@@ -768,14 +774,32 @@ public class Table
      * Check the size of the tuple (number of elements in array) as well as the
      * type of each value to ensure it is from the right domain.
      *
-     * @param t the tuple as a array of attribute values
-     * @return whether the tuple has the right size and values that comply with
-     * the given domains
+     * @author Curt Leonard
+     * 
+     * @param t  the tuple as a array of attribute values
+     * @return  whether the tuple has the right size and values that comply
+     *          with the given domains
      */
-    private boolean typeCheck(Comparable[] t) {
-        //  T O   B E   I M P L E M E N T E D 
+    private boolean typeCheck (Comparable [] t)
+    { 
+       
 
-        return true;      // change once implemented
+        if (t.length != domain.length) { // If the number of values in the tuple is longer or shorter than the domain 
+            System.out.println("tuple length is not the same as the domain");
+            return false;
+        }
+
+        for (int i = 0; i < t.length; i++) { // iterating through the tuple
+            
+            if (t[i].getClass() != domain[i]) { // if the class of the element does not match the class that it should be 
+                
+                System.out.println("The class of the element is: " + t[i].getClass());
+                System.out.println("The class that it should be is: " + domain[i]);
+                return false;
+            }
+        }
+
+        return true;     // reached only if both the size and the types of the tuple are valid
     } // typeCheck
 
     /**
