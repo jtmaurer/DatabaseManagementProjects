@@ -75,6 +75,7 @@ class MovieDB
 
         var exec0 = new Comparable [] { 9999, "S_Spielberg", "Hollywood", 10000.00 };
         out.println ();
+        //This insert fails
         movieExec.insert (exec0);
         movieExec.print ();
 
