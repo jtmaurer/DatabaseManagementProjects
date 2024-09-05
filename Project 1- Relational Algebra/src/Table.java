@@ -335,7 +335,9 @@ public class Table
      * Union this table and table2. Check that the two tables are compatible.
      *
      * #usage movie.union (show)
-     *
+     * 
+     * @author Thomas Nguyen
+     * 
      * @param table2 the rhs table in the union operation
      * @return a table representing the union
      */
@@ -346,10 +348,12 @@ public class Table
         }
 
         List<Comparable[]> rows = new ArrayList<>();
-
+        
+        // loops and adds all tuples in table
         for (int i = 0; i < table2.tuples.size(); i++) {
-            rows.add(table2.tuples.get(i));
+            rows.add(table2.tuples.get(i)); 
         }
+        // loops and adds all tuples in the original table
         for (int i = 0; i < this.tuples.size(); i++) {
             rows.add(this.tuples.get(i));
         }
