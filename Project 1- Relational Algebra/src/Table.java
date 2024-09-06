@@ -250,7 +250,8 @@ public class Table
         return new Table(name + count++, attribute, domain, key, rows);
     } // select
 
-    /**
+    /**@author Ridhima Reddy
+    //run tests select
      * **********************************************************************************
      * Does tuple t satify the condition t[colNo] op value where op is ==, !=,
      * <, <=, >, >=?
