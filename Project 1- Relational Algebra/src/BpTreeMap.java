@@ -349,20 +349,26 @@ public class BpTreeMap <K extends Comparable <K>, V>
 
             if (DEBUG) out.println ("insert: handle internal node level");
 
-            if (rt != null ) {
+            if (rt != null) {                                         // checks if its null
 
-                K urt = rt.key[0];
-                rt = addI(n, urt, rt);
 
-                if (rt != null && n == root) {
+                if (rt.isLeaf) {                                      // Checks if rt is a leaf node
+                    rt = addI(n, rt.key[0], rt);                      // adds it if it is
+                } else {                                              // else
+                    Node urt = rt;                                    // make a new node
+                    while (!urt.isLeaf) {                             // while the right node is not a leaf node
+                        urt = (Node) (urt.ref[0]);                    // we can take it as refrence for the middle node
+                    }
+                    rt = addI(n, urt.key[0], rt);                     // we then find the middle node and then we can add it
+                }
 
-                    root = new Node(n, rt.key[0], rt);
-                    return root;
+                // Uses key to insert internal node
+
+                if (rt != null && n == root) {                        // Checks if it is not null and the root
+                    root = new Node(root, root.key[HALF], rt);        // sets the new root
+                    return root;                                      // return root
                 }
             }
-
-
-
         } // if
 
         if (DEBUG) printT (root, 0);
@@ -395,12 +401,12 @@ public class BpTreeMap <K extends Comparable <K>, V>
     {
 
 
-        Node rt = null;
-        n.add (k, v);
-        if (n.overflow ()) {
-            rt = n.splitI();
+        Node rt = null;                                                 // creates sibling node
+        n.add (k, v);                                                   // adds to node n
+        if (n.overflow ()) {                                            // checks if it overflows
+            rt = n.splitI();                                            // splits internal node
         }
-        return rt;
+        return rt;                                                      // return sibling
     } // addI
 
 //-----------------------------------------------------------------------------------
@@ -443,7 +449,7 @@ public class BpTreeMap <K extends Comparable <K>, V>
      */
     public static void main (String [] args)
     {
-        var totalKeys = 50;
+        var totalKeys = 150;
         var RANDOMLY  = false;
         var bpTree       = new BpTreeMap <Integer, Integer> (Integer.class, Integer.class);
         if (args.length == 1) totalKeys = Integer.valueOf (args[0]);
