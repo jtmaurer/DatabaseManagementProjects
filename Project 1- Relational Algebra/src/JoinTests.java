@@ -104,7 +104,7 @@ class JoinTests
         out.println ();
         movie.print();
         cinema.print();
-        var t_join2 = movie.join (cinema);
+        var t_join2 = movie.join (starsIn);
         t_join2.print ();
 
         //--------------------- theta join: movie JOIN studio
