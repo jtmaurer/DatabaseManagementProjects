@@ -859,5 +859,8 @@ public class Table
         return obj;
     } // extractDom
 
+    public List<Comparable[]> getTuples() {
+        return tuples;
+    }
 } // Table
 
