@@ -1,6 +1,6 @@
 
 
-# Project 1 - Relational Algebra
+# Project 2 - Indexing
 
 This project's goals were to replicate the 5 basic relational algebra operators in Java using the Table class provided to us. 
 
@@ -12,7 +12,7 @@ This project's goals were to replicate the 5 basic relational algebra operators 
 - Thomas Nguyen
 
 #Objective
-- Implement and test five core RA operators: 'select', 'project', 'union', 'minus', and 'join'.   
+- Speed up the impementation of the Relational Algerbra Operators. implement BpTreeMap, create unique and non-unique indices, and use a creation method.
 
 # Key Features
 
