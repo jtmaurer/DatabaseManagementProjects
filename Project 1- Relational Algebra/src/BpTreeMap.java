@@ -3,7 +3,7 @@
  *
  * @author  John Miller
  *
- * compile javac --enable-preview --release 21 BpTreeMap.java
+ * compile javac --enable-preview --release 22 BpTreeMap.java
  * run     java --enable-preview BpTreeMap
  *
  * Split Nodes on Overflow
@@ -44,6 +44,10 @@ public class BpTreeMap <K extends Comparable <K>, V>
 
     private final Class <K> classK;                                   // The class for type K.
     private final Class <V> classV;                                   // The class for type V.
+
+    //public final Boolean is_Unique;                                   // The class for type V.
+    //public final String[] attributes;
+
 
 //-----------------------------------------------------------------------------------
 // Node inner class
@@ -218,12 +222,15 @@ public class BpTreeMap <K extends Comparable <K>, V>
      * @param _classK  the class for keys (K)
      * @param _classV  the class for values (V)
      */
+    //public BpTreeMap (Class <K> _classK, Class <V> _classV, Boolean _is_Unique, Optional<String[]> _attributes)
     public BpTreeMap (Class <K> _classK, Class <V> _classV)
     {
         classK    = _classK;
         classV    = _classV;
         root      = new Node (0, true);                                // make an empty root
         firstLeaf = root;
+        // is_Unique = _is_Unique;
+        // attributes = _attributes.orElse(null);
     } // constructor
 
     /********************************************************************************
@@ -307,11 +314,18 @@ public class BpTreeMap <K extends Comparable <K>, V>
     public V put (K key, V value)
     {
         kCount += 1;
+        // if(is_Unique){
+        //     if(find(key) != null){
+        //         out.println("Unable to insert duplicate " + key + " key");
+        //         return null;
+        //     }
+        // }
         insert (key, value, root);
         return null;
     } // put
 
     /********************************************************************************
+     * Author: Thomas
      * Recursive helper function for inserting a key into a B+tree.
      * Add key-ref pair into node n and when it is full will split node n by
      * allocating a right sibling node rt and placing the lesser half of n's key in rt.
@@ -390,6 +404,8 @@ public class BpTreeMap <K extends Comparable <K>, V>
     } // add
 
     /********************************************************************************
+     * Author: Thomas
+     * 
      * Add new key k and value v into INTERNAL node n.  Upon overflow, split node n,
      * in which case the new right sibling node (containing the divider key) is returned.
      * @param n  the current node
@@ -448,8 +464,9 @@ public class BpTreeMap <K extends Comparable <K>, V>
      */
     public static void main (String [] args)
     {
-        var totalKeys = 150;
+        var totalKeys = 50;
         var RANDOMLY  = false;
+        // var bpTree       = new BpTreeMap <Integer, Integer> (Integer.class, Integer.class, false, Optional.empty());
         var bpTree       = new BpTreeMap <Integer, Integer> (Integer.class, Integer.class);
         if (args.length == 1) totalKeys = Integer.valueOf (args[0]);
 
@@ -460,6 +477,7 @@ public class BpTreeMap <K extends Comparable <K>, V>
             for (var i = 1; i <= totalKeys; i += 2) bpTree.put (i, i * i);
         } // if
 
+        out.println ("-------------------------------------------");
         bpTree.printT (bpTree.root, 0);
         for (var i = 0; i <= totalKeys; i++) {
             out.println (STR."key = \{i}, value = \{bpTree.get (i)}");
@@ -473,6 +491,15 @@ public class BpTreeMap <K extends Comparable <K>, V>
         var enSet = bpTree.entrySet ();
         out.println ("EntrySet: " + enSet);
         out.println ("-------------------------------------------");
+        out.println(bpTree.get(45));
+        // var bpTree2 = new BpTreeMap <Integer, Integer> (Integer.class, Integer.class, false, Optional.empty());
+        var bpTree2 = new BpTreeMap <Integer, Integer> (Integer.class, Integer.class);
+        bpTree2.put(1, 1);
+        bpTree2.put(2, 4);
+        bpTree2.put(2, 5);
+        bpTree2.put(3, 9);
+        bpTree2.printT(bpTree2.root, 0);
+
     } // main
 
 } // BpTreeMap

@@ -17,6 +17,7 @@ import static java.lang.Boolean.*;
 import static java.lang.System.arraycopy;
 import static java.lang.System.out;
 import java.lang.classfile.Attributes;
+import java.lang.reflect.Array;
 
 /**
  * **************************************************************************************
@@ -75,6 +76,9 @@ public class Table
      */
     private final Map<KeyType, Comparable[]> index;
 
+    private final ArrayList<Map<KeyType, Comparable[]>> alternate_indexes = new ArrayList<Map<KeyType, Comparable[]>>();
+
+
     /**
      * The supported map types.
      */
@@ -101,6 +105,34 @@ public class Table
             default -> null;
         }; // switch
     } // makeMap
+    
+    /**
+     * **********************************************************************************
+     * Author: Jason 
+     * Create alternate index to primary key index. Appends to array list holding all 
+     * initialized indexes not including primary key index.
+     *
+     * @param index_key attributes making the key for the index
+     * @param _is_Unique boolean for if the index is unique
+     * 
+     */
+    private void create_index(String[] index_key, Boolean _is_Unique){
+        for (Map<KeyType, Comparable[]> alternate_index : alternate_indexes) {
+            //if(Arrays.equals(alternate_index.!attributes, index_key))
+        }
+        // Create array list holding attributes for each alternate index
+        // Initialize new index
+        // Populate index if there are more than 0 tuples
+        // and add index to array list
+        // Modify insert method to add new tuples to alternate indexes
+        //Also modify insert to not insert duplicate unique index column tuples
+        // Could create an index for every attribute
+
+
+        if(Arrays.equals(key, index_key)){
+
+        }
+    }
 
     /**
      * **********************************************************************************
@@ -546,6 +578,23 @@ public class Table
             }
         }
 
+        //If no overlapping attributes
+        if(commonAttributesList.isEmpty()){
+            //Cartesian product loop
+            for (int i = 0; i < this.tuples.size(); i++) {
+                Comparable[] tuple_t = this.tuples.get(i);
+                for (int j = 0; j < table2.tuples.size(); j++) {
+                    Comparable[] tuple_u = table2.tuples.get(j);
+                    Comparable[] new_tuple = concat(tuple_t, tuple_u);
+                    rows.add(new_tuple);
+                }
+            }
+            
+            out.print("No overlapping attributes between table " + this.name + " and table " + table2.name + " - cartesian product returned");
+            return new Table(name + count++, concat(this.attribute, table2.attribute),
+                concat(this.domain, table2.domain), key, rows);
+        }
+
         String[] common_attributes = commonAttributesList.toArray(new String[0]);
         String[] table_2_condensed_attributes = table_2_condensed_attributes_List.toArray(new String[0]);
 
@@ -809,7 +858,8 @@ public class Table
         }
 
         for (int i = 0; i < t.length; i++) { // iterating through the tuple
-
+            System.out.println("The class of the element is: " + t[i].getClass());
+            System.out.println("The class that it should be is: " + domain[i]);
             if (t[i].getClass() != domain[i]) { // if the class of the element does not match the class that it should be 
 
                 System.out.println("The class of the element is: " + t[i].getClass());

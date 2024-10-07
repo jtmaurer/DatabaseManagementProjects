@@ -1,3 +1,3 @@
 #!/bin/bash
 
-java -cp  bin --enable-preview JoinTests
+java -cp  bin --enable-preview MovieDB

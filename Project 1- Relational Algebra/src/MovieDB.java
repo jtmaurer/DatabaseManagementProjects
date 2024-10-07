@@ -50,6 +50,7 @@ class MovieDB
         movie.insert (film1);
         movie.insert (film2);
         movie.insert (film3);
+        movie.insert (film3);
         movie.print ();
 
         var film4 = new Comparable [] { "Galaxy_Quest", 1999, 104, "comedy", "DreamWorks", 67890 };
@@ -188,9 +189,10 @@ class MovieDB
         t_join.print ();
 
         //--------------------- natural join: movie JOIN studio
-
         out.println ();
-        var t_join2 = movie.join (cinema);
+        starsIn.print();
+        out.println ();
+        var t_join2 = movie.join (starsIn);
         t_join2.print ();
 
     } // main
