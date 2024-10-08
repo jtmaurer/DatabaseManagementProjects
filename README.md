@@ -1,6 +1,8 @@
-# Project 1 - Relational Algebra
 
-This project's goals were to replicate the 5 basic relational algebra operators in Java using the Table class provided to us. 
+
+# Project 2 - Indexing
+
+This project's goals were to speed up the implementation of the following Relational Algebra Operators, implement BpTreeMap, create both Unique and Non-Unique Indices, and use a creation method. 
 
 ## Authors
 - Ridhima Reddy
@@ -10,15 +12,35 @@ This project's goals were to replicate the 5 basic relational algebra operators 
 - Thomas Nguyen
 
 #Objective
-- Implement and test five core RA operators: 'select', 'project', 'union', 'minus', and 'join'.   
+- Speed up the impementation of the Relational Algerbra Operators, implement BpTreeMap, create unique and non-unique indices, and use a creation method.
 
 # Key Features
 
-- Select: Retrieves tuples based on specified conditions
-- Project: Selects specific attributes from the tuples
-- Union: Combines tuples from two tables without duplicates
-- Minus: Removes tuples in the first table that also exist in the second table
-- Join: Performs equi-joins between tables based on matching attributes
+1. Relational Algebra Operators:
+   - Implementation and optimization of five core relational algebra operators: **Select**, **Project**, **Union**, **Minus**, and **Join**.
+   - Focus on improving the efficiency of these operators using indexing techniques.
+
+2. **Indexing Techniques:
+   - Use of **BpTreeMap** and **B+Tree Index** to speed up query operations.
+   - Index structures help reduce the need for full table scans, enhancing performance for data retrieval and manipulation.
+
+3. Indexed Select and Join:
+   - **Indexed Select** allows faster retrieval of tuples based on conditions using the index.
+   - **Indexed Join** improves the performance of matching tuples between two datasets.
+
+4. Unique and Non-Unique Indexes:
+   - Creation of both **Unique** and **Non-Unique** indices.
+   - Default behavior creates a unique index for primary keys, while non-unique indices are used for other columns.
+
+5. Index Management:
+   - Methods like **create_index**, **create_unique_index**, and **drop_index** allow easy management of indices.
+   - These methods allow flexibility in creating and deleting indices as needed for performance optimization.
+
+6. Performance Focus:
+   - Emphasis on testing and benchmarking operations with and without indexing to measure performance improvements.
+   - Enhanced query speed for **Select**, **Project**, **Union**, **Minus**, and **Join** operations.
+
+
 
 # Key Goals
 - Simulated basic database operations
@@ -57,15 +79,16 @@ java -cp  bin --enable-preview MovieDB
 javac -d bin --enable-preview --release 22 src/*.java
 
 # Contributions
--Ridhima(Manager): Tested select function and helped enhance rest of the functions. I also worked on compiling and running scripts and wrote the documentation and readme file for the project.
-- Curt Leonard: Added the project function, using the Table class’s extract method to extract the elements that matched the specified elements and add them to the new table returned. Also implemented the typeCheck method, which verifies that the number of elements in the tuple is correct and that each element matches the type specified by the domain.
-- Heeya Jolly: Added the minus function by comparing the tuples from both tables and extracting tuples not present in the second table. The method returns a table containing only the rows that are present in the first table and not in the second.
-- Jason Todd Maurer: Implemented all 3 join functions in src/Table.java. Added src/JoinTests.java to test these join functions
-- Thomas Nguyen: Added the union function by creating two loops to check table compatibility and merge the tuples into a single table. The first loop adds tuples from the second table, while the second loop adds tuples from the first table, returning a new table with all the combined tuples. Since duplicates were not a concern, the function was completed at that point.
+-Ridhima(Manager): Tested and worked on Relational algebra functions and helped enhance rest of the indexes. I also worked on compiling and running scripts and wrote the documentation and readme file for the project.
+- Curt Leonard: Worked on speeding up the implementation of the following Relational Algebra Operators: Select, Project, Union, Minus, and Join.
+- Heeya Jolly: Created the create_index method designed to create non-unique indexes on a column in a table. This method accepts table name and column name and constructs an index using B+ Tree on the specified column. This method can be used to improve search and lookup operations.
+- Jason Todd Maurer: For Class Index: Implemented Constructor to specify values outside of the map that are specific to the index, InsertTuple() which inserts the tuple into the index, while checking that the insert is valid, PopulateMap() which populates an empty index with the tuples that already exist in the table.  For Class Table: Implemented delete_index, which deletes indexes, also implemented an ArrayList, which holds any created indexes, outside of the primary key index. 
+- Thomas Nguyen: Worked on the BpTree Map and implemented the Addi Method, which adds a node to the tree and handles internal node overflows by invoking a split function. Also, added the Insert which checks whether the node is null. If the node is a leaf, it is added in the usual manner. However, if the node is internal, the method recursively descends to ensure that the leaf nodes are correctly added to existing nodes. 
 
 
 # Documentation
-For a detailed explanation of the implementation, usage examples, and performance analysis, please refer to the documentation file named 'Documentation.pdf'.
+For a detailed explanation of our project, key features,implementations, indexes, and performance testing, and conculsion please refer to the documentation file named 'Documentation.pdf'.
+
 
 
 
