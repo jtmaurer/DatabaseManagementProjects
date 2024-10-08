@@ -9,6 +9,7 @@
  */
 import java.io.*;
 import java.util.*;
+import java.util.logging.*;
 import java.util.function.*;
 import java.util.stream.*;
 
@@ -585,9 +586,9 @@ public class Table
         for (var t : tuples) { // For every tuple in this table
             var keyVal = new KeyType(extract(t, t_attrs)); // get the key value wanted 
             var u = table2.index.get(keyVal); // check if there are matches in table 2
-            if (u != null) {
+            if (u != null) { // if there are matches
                 rows.add(concat(t, u)); // add concatenated tuples to rows
-            } //  ? Will this work? 
+            }  
         }
 
         String[] tAttrs = this.attribute; // Temp list of all attributes 
@@ -920,12 +921,14 @@ public class Table
         for (int i = 0; i < t.length; i++) { // iterating through the tuple
 
             if (t[i].getClass() != domain[i]) { // if the class of the element does not match the class that it should be 
-
                 
-
-                System.err.println("The class of the element is: " + t[i].getClass());
-                System.err.println("The class that it should be is: " + domain[i]);
+                java.util.logging.Logger logger =  java.util.logging.Logger.getLogger(this.getClass().getName());     
+                
+                logger.log(Level.WARNING, "The class of the element is: " + t[i].getClass() + " \nThe class that it should be is: " + domain[i]);
+                //System.err.println("The class of the element is: " + t[i].getClass());
+                //System.err.println("The class that it should be is: " + domain[i]);
                 return false;
+                
             }
         }
 
