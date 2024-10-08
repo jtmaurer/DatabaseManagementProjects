@@ -17,6 +17,7 @@ import static java.lang.Boolean.*;
 import static java.lang.System.arraycopy;
 import static java.lang.System.out;
 import java.lang.classfile.Attributes;
+import java.lang.classfile.instruction.ThrowInstruction;
 import java.lang.reflect.Array;
 
 /**
@@ -76,8 +77,7 @@ public class Table
      */
     private final Map<KeyType, Comparable[]> index;
 
-    private final ArrayList<Map<KeyType, Comparable[]>> alternate_indexes = new ArrayList<Map<KeyType, Comparable[]>>();
-
+    private ArrayList<Index> alternate_indexes;
 
     /**
      * The supported map types.
@@ -97,41 +97,46 @@ public class Table
      */
     private static Map<KeyType, Comparable[]> makeMap() {
         return switch (mType) {
-            case NO_MAP -> null;
-            case TREE_MAP -> new TreeMap<>();
-            case HASH_MAP -> new HashMap<>();
+            case NO_MAP ->
+                null;
+            case TREE_MAP ->
+                new TreeMap<>();
+            case HASH_MAP ->
+                new HashMap<>();
             //case LINHASH_MAP -> new LinHashMap <> (KeyType.class, Comparable [].class);
             //case BPTREE_MAP  -> new BpTreeMap <> (KeyType.class, Comparable [].class);
-            default -> null;
+            default ->
+                null;
         }; // switch
     } // makeMap
-    
+
     /**
      * **********************************************************************************
-     * Author: Jason 
-     * Create alternate index to primary key index. Appends to array list holding all 
-     * initialized indexes not including primary key index.
+     * Author: Jason Create alternate index to primary key index. Appends to
+     * array list holding all initialized indexes not including primary key
+     * index.
      *
      * @param index_key attributes making the key for the index
      * @param _is_Unique boolean for if the index is unique
-     * 
+     *
      */
-    private void create_index(String[] index_key, Boolean _is_Unique){
-        for (Map<KeyType, Comparable[]> alternate_index : alternate_indexes) {
-            //if(Arrays.equals(alternate_index.!attributes, index_key))
+    private void create_index(String[] index_key, Boolean _is_Unique) {
+        if(this.alternate_indexes == null){
+            this.alternate_indexes = new ArrayList<Index>();
         }
-        // Create array list holding attributes for each alternate index
-        // Initialize new index
-        // Populate index if there are more than 0 tuples
-        // and add index to array list
-        // Modify insert method to add new tuples to alternate indexes
-        //Also modify insert to not insert duplicate unique index column tuples
+        for (Index alternate_index : this.alternate_indexes) {
+            if(Arrays.equals(alternate_index.getIndexKey(), index_key) || Arrays.equals(index_key, this.key)){
+                throw new IllegalArgumentException(
+                        "error: Index already exists for " + Arrays.toString(index_key)
+                );
+            }
+        }
+        this.alternate_indexes.add(new Index(makeMap(), this, _is_Unique, index_key));
         // Could create an index for every attribute
+    }
 
-
-        if(Arrays.equals(key, index_key)){
-
-        }
+    private void delete_index(String[] index_key){
+        
     }
 
     /**
@@ -141,7 +146,8 @@ public class Table
      * @param arr1 the first array
      * @param arr2 the second array
      * @return a wider array containing all the values from arr1 and arr2
-     * @see http://stackoverflow.com/questions/80476/how-to-concatenate-two-arrays-in-java
+     * @see
+     * http://stackoverflow.com/questions/80476/how-to-concatenate-two-arrays-in-java
      */
     public static <T> T[] concat(T[] arr1, T[] arr2) {
         T[] result = Arrays.copyOf(arr1, arr1.length + arr2.length);
@@ -152,15 +158,14 @@ public class Table
     //-----------------------------------------------------------------------------------
     // Constructors
     //-----------------------------------------------------------------------------------
-
     /**
      * **********************************************************************************
      * Construct an empty table from the meta-data specifications.
      *
-     * @param _name      the name of the relation
+     * @param _name the name of the relation
      * @param _attribute the string containing attributes names
-     * @param _domain    the string containing attribute domains (data types)
-     * @param _key       the primary key
+     * @param _domain the string containing attribute domains (data types)
+     * @param _key the primary key
      */
     public Table(String _name, String[] _attribute, Class[] _domain, String[] _key) {
         name = _name;
@@ -177,14 +182,14 @@ public class Table
      * Construct a table from the meta-data specifications and data in _tuples
      * list.
      *
-     * @param _name      the name of the relation
+     * @param _name the name of the relation
      * @param _attribute the string containing attributes names
-     * @param _domain    the string containing attribute domains (data types)
-     * @param _key       the primary key
-     * @param _tuples    the list of tuples containing the data
+     * @param _domain the string containing attribute domains (data types)
+     * @param _key the primary key
+     * @param _tuples the list of tuples containing the data
      */
     public Table(String _name, String[] _attribute, Class[] _domain, String[] _key,
-                 List<Comparable[]> _tuples) {
+            List<Comparable[]> _tuples) {
         name = _name;
         attribute = _attribute;
         domain = _domain;
@@ -197,10 +202,10 @@ public class Table
      * **********************************************************************************
      * Construct an empty table from the raw string specifications.
      *
-     * @param _name      the name of the relation
+     * @param _name the name of the relation
      * @param attributes the string containing attributes names
-     * @param domains    the string containing attribute domains (data types)
-     * @param _key       the primary key
+     * @param domains the string containing attribute domains (data types)
+     * @param _key the primary key
      */
     public Table(String _name, String attributes, String domains, String _key) {
         this(_name, attributes.split(" "), findClass(domains.split(" ")), _key.split(" "));
@@ -211,7 +216,6 @@ public class Table
     //----------------------------------------------------------------------------------
     // Public Methods
     //----------------------------------------------------------------------------------
-
     /**
      * **********************************************************************************
      * Project the tuples onto a lower dimension by keeping only the given
@@ -282,8 +286,8 @@ public class Table
         return new Table(name + count++, attribute, domain, key, rows);
     } // select
 
-    /**@author Ridhima Reddy
-    //run tests select
+    /**
+     * @author Ridhima Reddy //run tests select
      * **********************************************************************************
      * Does tuple t satify the condition t[colNo] op value where op is ==, !=,
      * <, <=, >, >=?
@@ -291,35 +295,51 @@ public class Table
      * #usage satisfies (t, 1, "<", "1980")
      *
      * @param colNo the attribute's column number
-     * @param op    the comparison operator
+     * @param op the comparison operator
      * @param value the value to compare with (must be converted, String ->
-     *              domain type)
+     * domain type)
      * @return whether the condition is satisfied
      */
     private boolean satifies(Comparable[] t, int colNo, String op, String value) {
         var t_A = t[colNo];
         out.println(STR."satisfies: \{t_A} \{op} \{value}");
         var valt = switch (domain[colNo].getSimpleName()) {      // type converted
-            case "Byte" -> Byte.valueOf(value);
-            case "Character" -> value.charAt(0);
-            case "Double" -> Double.valueOf(value);
-            case "Float" -> Float.valueOf(value);
-            case "Integer" -> Integer.valueOf(value);
-            case "Long" -> Long.valueOf(value);
-            case "Short" -> Short.valueOf(value);
-            case "String" -> value;
-            default -> value;
+            case "Byte" ->
+                Byte.valueOf(value);
+            case "Character" ->
+                value.charAt(0);
+            case "Double" ->
+                Double.valueOf(value);
+            case "Float" ->
+                Float.valueOf(value);
+            case "Integer" ->
+                Integer.valueOf(value);
+            case "Long" ->
+                Long.valueOf(value);
+            case "Short" ->
+                Short.valueOf(value);
+            case "String" ->
+                value;
+            default ->
+                value;
         }; // switch
         var comp = t_A.compareTo(valt);
 
         return switch (op) {
-            case "==" -> comp == 0;
-            case "!=" -> comp != 0;
-            case "<" -> comp < 0;
-            case "<=" -> comp <= 0;
-            case ">" -> comp > 0;
-            case ">=" -> comp >= 0;
-            default -> false;
+            case "==" ->
+                comp == 0;
+            case "!=" ->
+                comp != 0;
+            case "<" ->
+                comp < 0;
+            case "<=" ->
+                comp <= 0;
+            case ">" ->
+                comp > 0;
+            case ">=" ->
+                comp >= 0;
+            default ->
+                false;
         }; // switch
     } // satifies
 
@@ -409,9 +429,9 @@ public class Table
      * #usage movie.join ("studioName", "name", studio)
      *
      * @param attributes1 the attributes of this table to be compared (Foreign
-     *                    Key)
+     * Key)
      * @param attributes2 the attributes of table2 to be compared (Primary Key)
-     * @param table2      the rhs table in the join operation
+     * @param table2 the rhs table in the join operation
      * @return a table with tuples satisfying the equality predicate
      * @author Jason Maurer
      */
@@ -474,7 +494,7 @@ public class Table
      * #usage movie.join ("studioName == name", studio)
      *
      * @param condition the theta join condition
-     * @param table2    the rhs table in the join operation
+     * @param table2 the rhs table in the join operation
      * @return a table with tuples satisfying the condition
      * @author Jason Maurer
      */
@@ -527,9 +547,9 @@ public class Table
      * equi-join, but implemented using an INDEXED JOIN algorithm.
      *
      * @param attributes1 the attributes of this table to be compared (Foreign
-     *                    Key)
+     * Key)
      * @param attributes2 the attributes of table2 to be compared (Primary Key)
-     * @param table2      the rhs table in the join operation
+     * @param table2 the rhs table in the join operation
      * @return a table with tuples satisfying the equality predicate
      */
     public Table i_join(String attributes1, String attributes2, Table table2) {
@@ -579,7 +599,7 @@ public class Table
         }
 
         //If no overlapping attributes
-        if(commonAttributesList.isEmpty()){
+        if (commonAttributesList.isEmpty()) {
             //Cartesian product loop
             for (int i = 0; i < this.tuples.size(); i++) {
                 Comparable[] tuple_t = this.tuples.get(i);
@@ -589,10 +609,10 @@ public class Table
                     rows.add(new_tuple);
                 }
             }
-            
+
             out.print("No overlapping attributes between table " + this.name + " and table " + table2.name + " - cartesian product returned");
             return new Table(name + count++, concat(this.attribute, table2.attribute),
-                concat(this.domain, table2.domain), key, rows);
+                    concat(this.domain, table2.domain), key, rows);
         }
 
         String[] common_attributes = commonAttributesList.toArray(new String[0]);
@@ -633,25 +653,7 @@ public class Table
                 concat(table_1_temp_domain, table_2_condensed_domains), key, rows);
     } // join
 
-    /**
-     * **********************************************************************************
-     * Return the column position for the given attribute name or -1 if not
-     * found.
-     *
-     * @param attr the given attribute name
-     * @return a column position
-     */
-    public int col(String attr) {
-        for (var i = 0; i < attribute.length; i++) {
-            if (attr.equals(attribute[i])) {
-                return i;
-            }
-        } // for
-
-        return -1;       // -1 => not found
-    } // col
-
-    /**
+        /**
      * **********************************************************************************
      * Insert a tuple to the table.
      * <p>
@@ -672,6 +674,9 @@ public class Table
             }
             if (mType != MapType.NO_MAP) {
                 index.put(new KeyType(keyVal), tup);
+                for(Index ind : this.alternate_indexes){
+                    ind.insertTuple(tup);
+                }
             }
             return true;
         } else {
@@ -773,7 +778,6 @@ public class Table
     //----------------------------------------------------------------------------------
     // Private Methods
     //----------------------------------------------------------------------------------
-
     /**
      * **********************************************************************************
      * Determine whether the two tables (this and table2) are compatible, i.e.,
@@ -827,7 +831,7 @@ public class Table
      * **********************************************************************************
      * Extract the attributes specified by the column array from tuple t.
      *
-     * @param t      the tuple to extract from
+     * @param t the tuple to extract from
      * @param column the array of column names
      * @return a smaller tuple extracted from tuple t
      */
@@ -897,7 +901,7 @@ public class Table
      * Extract the corresponding domains.
      *
      * @param colPos the column positions to extract.
-     * @param group  where to extract from
+     * @param group where to extract from
      * @return the extracted domains
      */
     private Class[] extractDom(int[] colPos, Class[] group) {
@@ -910,8 +914,37 @@ public class Table
         return obj;
     } // extractDom
 
+    /**
+     * **********************************************************************************
+     * Return the column position for the given attribute name or -1 if not
+     * found.
+     *
+     * @param attr the given attribute name
+     * @return a column position
+     */
+    public int col(String attr) {
+        for (var i = 0; i < attribute.length; i++) {
+            if (attr.equals(attribute[i])) {
+                return i;
+            }
+        } // for
+
+        return -1;       // -1 => not found
+    } // col
+
+    //Utility Methods
+
     public List<Comparable[]> getTuples() {
         return tuples;
     }
+
+    public MapType getMapType(){
+        return mType;
+    }
+
+    public Class[] getDomain(){
+        return domain;
+    }
+
 } // Table
 
