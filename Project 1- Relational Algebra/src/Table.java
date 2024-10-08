@@ -13,6 +13,7 @@ import java.util.function.*;
 import java.util.stream.*;
 
 import static java.lang.Boolean.*;
+import static java.lang.StringTemplate.STR;
 //import static java.lang.StringTemplate.STR;
 import static java.lang.System.arraycopy;
 import static java.lang.System.out;
@@ -27,7 +28,7 @@ import java.lang.classfile.Attributes;
  * manipulation operators.
  */
 public class Table
-        implements Serializable {
+    implements Serializable {
 
     /**
      * Relative path for storage directory
@@ -85,7 +86,7 @@ public class Table
     /**
      * The map type to be used for indices. Change as needed.
      */
-    private static final MapType mType = MapType.NO_MAP;
+    private static final MapType mType = MapType.HASH_MAP;
 
     /**
      * **********************************************************************************
@@ -97,7 +98,7 @@ public class Table
             case TREE_MAP -> new TreeMap<>();
             case HASH_MAP -> new HashMap<>();
             //case LINHASH_MAP -> new LinHashMap <> (KeyType.class, Comparable [].class);
-            //case BPTREE_MAP  -> new BpTreeMap <> (KeyType.class, Comparable [].class);
+            case BPTREE_MAP  -> new BpTreeMap <> (KeyType.class, Comparable [].class);
             default -> null;
         }; // switch
     } // makeMap
@@ -191,7 +192,7 @@ public class Table
      * <p>
      * #usage movie.project ("title year studioNo")
      */
-    public Table project(String attributes) {
+    public Table project(String attributes) { 
         out.println("RA> " + name + ".project (" + attributes + ")");
         var attrs = attributes.split(" ");
         var colDomain = extractDom(match(attrs), domain);
@@ -199,9 +200,30 @@ public class Table
 
         List<Comparable[]> rows = new ArrayList<>();
 
-        for (var t : tuples) {
-            rows.add(extract(t, attrs)); // extracts the elements of each row that match the attributes specifies by the user 
+        //List<Comparable> keysFound = new ArrayList<>();
+
+        if (mType != MapType.NO_MAP) { // If the table has an index
+       
+        /*for (var t : tuples) { // Looping thru the entire index 
+
+        if (index.get(new KeyType(extract(t, key))).equals(t)) {  // If 
+            rows.add(extract(t, attrs)); 
         }
+            
+        } */
+
+        for (var t : index.values()) { // Looping through the entire index, as the index only contains distinct keys and values 
+            rows.add(extract(t, attrs)); 
+        }
+
+     } else {
+        for (var t : tuples) { //Fallback to original implementation if no index
+                rows.add(extract(t, attrs)); // extracts the elements of each row that match the attributes specifies by the user
+            }
+        }
+             
+            
+        
 
         return new Table(name + count++, attrs, colDomain, newKey, rows); // returns a new table with the project function applied 
     } // project
@@ -297,15 +319,24 @@ public class Table
      * an index (Map) to retrieve the tuple with the given key value. INDEXED
      * SELECT algorithm.
      *
+     * @author Curt Leonard
+     * 
      * @param keyVal the given key value
      * @return a table with the tuple satisfying the key predicate
      */
-    public Table select(KeyType keyVal) {
+    public Table select(KeyType keyVal) { 
         out.println(STR."RA> \{name}.select (\{keyVal})");
 
         List<Comparable[]> rows = new ArrayList<>();
 
-        //  T O   B E   I M P L E M E N T E D  - Project 2
+        if (mType != MapType.NO_MAP) { // If the table has an index
+            var t = index.get(keyVal); // Get the tuple if it exists s.t. key = value
+            if (t != null) { 
+                rows.add(t); // If the tuple exists add it to rows
+            }
+       } // ? I Think this is everything i need to do but not sure until indexing is done. 
+       // ? Because this is just looking at the key value of the index, there shouldnt be a need to loop because the index won't have duplicates.
+
         return new Table(name + count++, attribute, domain, key, rows);
     } // select
 
@@ -318,6 +349,7 @@ public class Table
      * @param table2 the rhs table in the union operation
      * @return a table representing the union
      * @author Thomas Nguyen
+     * @author Curt Leonard
      */
     public Table union(Table table2) {
         out.println(STR."RA> \{name}.union (\{table2.name})");
@@ -326,6 +358,22 @@ public class Table
         }
 
         List<Comparable[]> rows = new ArrayList<>();
+
+
+        if (table2.mType != MapType.NO_MAP && this.mType != MapType.NO_MAP) { // If both tables have an index
+
+            for (var t : table2.index.values()) { // add all tuples from the second table
+                rows.add(t);
+            }
+            for (var k : this.index.keySet()) { // add all tuples from the first table
+
+                if(!table2.index.containsKey(k)) { // If the tuple doesnt exist in the second table, add it to the rows
+                    rows.add(this.index.get(k));
+                }
+            }
+            return new Table(name + count++, attribute, domain, key, rows); 
+        } else {
+            //FALLBACK TO ORIGINAL IMPLEMENTATION
 
         // loops and adds all tuples in table
         for (int i = 0; i < table2.tuples.size(); i++) {
@@ -337,6 +385,7 @@ public class Table
         }
 
         return new Table(name + count++, attribute, domain, key, rows);
+     }
     } // union
 
     /**
@@ -349,22 +398,35 @@ public class Table
      * @param table2 The rhs table in the minus operation
      * @return a table representing the difference
      * @author Heeya Jolly
+     * @author Curt Leonard
      */
-    public Table minus(Table table2) {
+    public Table minus(Table table2) { 
         out.println(STR."RA> \{name}.minus (\{table2.name})");
         if (!compatible(table2)) {
-            return null;
+            return null; // null if not compatible 
         }
 
         List<Comparable[]> rows = new ArrayList<>();
 
+        if (table2.mType != MapType.NO_MAP) { // If we have an index in table 2 to lookup 
         for (var tup : tuples) {
-            if (!table2.tuples.contains(tup)) {
-                rows.add(tup);
+            if (table2.index.get(new KeyType(extract(tup, key))) == null) { // check to see if it is in table 2 
+                rows.add(tup); // If not in table 2 add it to the new table
             }
         }
+        return new Table(name + count++, attribute, domain, key, rows); //Return new table 
 
+        } else { // Fallback to original implementation if no index
+
+            for (var tup : tuples) {
+                if (!table2.tuples.contains(tup)) {
+                    rows.add(tup);
+                }
+            }
+        
         return new Table(name + count++, attribute, domain, key, rows);
+        }
+
     } // minus
 
     /**
@@ -493,6 +555,8 @@ public class Table
      * **********************************************************************************
      * Join this table and table2 by performing an "equi-join". Same as above
      * equi-join, but implemented using an INDEXED JOIN algorithm.
+     * 
+     * @author Curt Leonard
      *
      * @param attributes1 the attributes of this table to be compared (Foreign
      *                    Key)
@@ -501,9 +565,54 @@ public class Table
      * @return a table with tuples satisfying the equality predicate
      */
     public Table i_join(String attributes1, String attributes2, Table table2) {
-        //  T O   B E   I M P L E M E N T E D  - Project 2
+        
+        out.println(STR."RA> \{name}.i_join (\{attributes1}, \{attributes2}, \{table2.name})");
 
-        return null;
+        var t_attrs = attributes1.split(" ");
+        var u_attrs = attributes2.split(" ");
+        var rows = new ArrayList<Comparable[]>(); 
+
+        //Get column indexes of each attribute
+        //var t_attrs_columns = this.match(t_attrs);
+        //var u_attrs_columns = table2.match(u_attrs);
+
+        /**
+         * Above taken from Jason's implementation of EquiJoin
+         */
+
+        if (table2.mType != MapType.NO_MAP && this.mType != MapType.NO_MAP) { // if both tables have index
+
+        for (var t : tuples) { // For every tuple in this table
+            var keyVal = new KeyType(extract(t, t_attrs)); // get the key value wanted 
+            var u = table2.index.get(keyVal); // check if there are matches in table 2
+            if (u != null) {
+                rows.add(concat(t, u)); // add concatenated tuples to rows
+            } //  ? Will this work? 
+        }
+
+        String[] tAttrs = this.attribute; // Temp list of all attributes 
+        String[] uAttrs = table2.attribute; // Another list of all attributes
+
+        Map<Integer, String> domains = new HashMap<>();
+        for (var t : tAttrs) { // For every tuple in table 2
+            domains.put(1, t); // put all attributes in a map for easy checking if there are duplicates
+        } 
+        for (int i = 0; i < uAttrs.length; i++) {
+            if (!domains.containsValue(uAttrs[i])) { //Because we're changing these values, can't use a foreach loop
+                domains.put(2, uAttrs[i]);
+            } else {
+                uAttrs[i] += "2";
+            }
+        }
+
+        return new Table(name + count++, concat(tAttrs, uAttrs), concat(domain, table2.domain), key, rows); // return the new table with the concatenated tuples
+
+        } else {
+
+            return join(attributes1, attributes2, table2); // fallback to nested loop join if no index
+        }
+
+        
 
     } // i_join
 
@@ -804,7 +913,7 @@ public class Table
     private boolean typeCheck(Comparable[] t) {
 
         if (t.length != domain.length) { // If the number of values in the tuple is longer or shorter than the domain 
-            System.out.println("tuple length is not the same as the domain");
+            System.err.println("tuple length is not the same as the domain");
             return false;
         }
 
@@ -812,8 +921,10 @@ public class Table
 
             if (t[i].getClass() != domain[i]) { // if the class of the element does not match the class that it should be 
 
-                System.out.println("The class of the element is: " + t[i].getClass());
-                System.out.println("The class that it should be is: " + domain[i]);
+                
+
+                System.err.println("The class of the element is: " + t[i].getClass());
+                System.err.println("The class that it should be is: " + domain[i]);
                 return false;
             }
         }

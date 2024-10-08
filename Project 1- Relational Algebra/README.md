@@ -11,7 +11,7 @@ This project's goals were to replicate the 5 basic relational algebra operators 
 - Jason Todd Maurer
 - Thomas Nguyen
 
-#Objective
+# Objective
 - Speed up the impementation of the Relational Algerbra Operators. implement BpTreeMap, create unique and non-unique indices, and use a creation method.
 
 # Key Features
