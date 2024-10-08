@@ -11,7 +11,7 @@ This project's goals were to speed up the implementation of the following Relati
 - Jason Todd Maurer
 - Thomas Nguyen
 
-#Objective
+# Objective
 - Speed up the impementation of the Relational Algerbra Operators, implement BpTreeMap, create unique and non-unique indices, and use a creation method.
 
 # Key Features
@@ -20,13 +20,13 @@ This project's goals were to speed up the implementation of the following Relati
    - Implementation and optimization of five core relational algebra operators: **Select**, **Project**, **Union**, **Minus**, and **Join**.
    - Focus on improving the efficiency of these operators using indexing techniques.
 
-2. **Indexing Techniques:
+2. Indexing Techniques:
    - Use of **BpTreeMap** and **B+Tree Index** to speed up query operations.
    - Index structures help reduce the need for full table scans, enhancing performance for data retrieval and manipulation.
 
 3. Indexed Select and Join:
-   - **Indexed Select** allows faster retrieval of tuples based on conditions using the index.
-   - **Indexed Join** improves the performance of matching tuples between two datasets.
+   - Indexed Select allows faster retrieval of tuples based on conditions using the index.
+   - Indexed Joinn improves the performance of matching tuples between two datasets.
 
 4. Unique and Non-Unique Indexes:
    - Creation of both **Unique** and **Non-Unique** indices.
@@ -43,13 +43,14 @@ This project's goals were to speed up the implementation of the following Relati
 
 
 # Key Goals
-- Simulated basic database operations
-- Build a foundational understanding of RA operators
-- Ensure correct data manipulation and retrieval
+- Improve performance** of relational algebra operators using indexing techniques like B+ Tree and BpTreeMap.  
+- Deepen understanding** of relational algebra operators and their role in databases.  
+- Ensure accurate data manipulation** while optimizing speed and efficiency.  
+- Learn to create and manage indexes** to enhance query performance.
 
 # Significance
-- Provides hands-on experience with core database operations
-- Lays the groundwork for understanding more complext DBMS functionalities
+- Provides hands on experience with essential database operations and indexing.  
+- Builds a foundation for learning more advanced database management concepts like query optimization.
 
 # Prerequisites
 - Before you begin, ensure you have me the following requirements:
