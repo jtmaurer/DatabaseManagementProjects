@@ -77,6 +77,9 @@ public class Table
      */
     private final Map<KeyType, Comparable[]> index;
 
+    /**
+     * Indexes besides the unique primary key index.
+     */
     private ArrayList<Index> alternate_indexes;
 
     /**
@@ -89,7 +92,7 @@ public class Table
     /**
      * The map type to be used for indices. Change as needed.
      */
-    private static final MapType mType = MapType.NO_MAP;
+    private static final MapType mType = MapType.BPTREE_MAP;
 
     /**
      * **********************************************************************************
@@ -104,40 +107,12 @@ public class Table
             case HASH_MAP ->
                 new HashMap<>();
             //case LINHASH_MAP -> new LinHashMap <> (KeyType.class, Comparable [].class);
-            //case BPTREE_MAP  -> new BpTreeMap <> (KeyType.class, Comparable [].class);
+            case BPTREE_MAP ->
+                new BpTreeMap<>(KeyType.class, Comparable[].class);
             default ->
                 null;
         }; // switch
     } // makeMap
-
-    /**
-     * **********************************************************************************
-     * Author: Jason Create alternate index to primary key index. Appends to
-     * array list holding all initialized indexes not including primary key
-     * index.
-     *
-     * @param index_key attributes making the key for the index
-     * @param _is_Unique boolean for if the index is unique
-     *
-     */
-    private void create_index(String[] index_key, Boolean _is_Unique) {
-        if(this.alternate_indexes == null){
-            this.alternate_indexes = new ArrayList<Index>();
-        }
-        for (Index alternate_index : this.alternate_indexes) {
-            if(Arrays.equals(alternate_index.getIndexKey(), index_key) || Arrays.equals(index_key, this.key)){
-                throw new IllegalArgumentException(
-                        "error: Index already exists for " + Arrays.toString(index_key)
-                );
-            }
-        }
-        this.alternate_indexes.add(new Index(makeMap(), this, _is_Unique, index_key));
-        // Could create an index for every attribute
-    }
-
-    private void delete_index(String[] index_key){
-        
-    }
 
     /**
      * **********************************************************************************
@@ -653,7 +628,7 @@ public class Table
                 concat(table_1_temp_domain, table_2_condensed_domains), key, rows);
     } // join
 
-        /**
+    /**
      * **********************************************************************************
      * Insert a tuple to the table.
      * <p>
@@ -674,8 +649,10 @@ public class Table
             }
             if (mType != MapType.NO_MAP) {
                 index.put(new KeyType(keyVal), tup);
-                for(Index ind : this.alternate_indexes){
-                    ind.insertTuple(tup);
+                if (this.alternate_indexes != null) {
+                    for (Index ind : this.alternate_indexes) {
+                        ind.insertTuple(tup);
+                    }
                 }
             }
             return true;
@@ -932,18 +909,89 @@ public class Table
         return -1;       // -1 => not found
     } // col
 
-    //Utility Methods
+    /**
+     * **********************************************************************************
+     * Finds the existing index with a key of index_key and a 'Uniqueness'
+     * status of _is_Unique.
+     * <p>
+     * #usage Index customer_id_index = (new String[]{"customer_id"}, true)
+     *
+     * @param index_key The attributes representing the key for this index
+     * @param _is_Unique Whether the index is unique or not
+     * @return An Index type which contains the map of the index
+     * @author Jason Maurer
+     */
+    private Index find_index(String[] index_key, Boolean _is_Unique) {
+        for (Index alternate_index : this.alternate_indexes) {
+            if (Arrays.equals(alternate_index.getIndexKey(), index_key)) {
+                if (_is_Unique == alternate_index.isUnique()) {
+                    return alternate_index;
+                }
+            }
+        }
+        out.println("Couldn't find index with key " + Arrays.toString(index_key) + " and is_Unique: " + _is_Unique);
+        return null;
+    }
 
+    /**
+     * **********************************************************************************
+     * Create alternate index to primary key index. Appends to array list
+     * holding all initialized indexes not including primary key index.
+     *
+     * @param index_key attributes making the key for the index
+     * @param _is_Unique boolean for if the index is unique
+     * @author Jason Maurer
+     */
+    public Index create_index(String[] index_key, Boolean _is_Unique) {
+        if (this.alternate_indexes == null) {
+            this.alternate_indexes = new ArrayList<Index>();
+        }
+
+        Index new_index = this.find_index(index_key, _is_Unique);
+
+        if (new_index == null) {
+            this.delete_index(index_key);
+            new_index = new Index(makeMap(), this, _is_Unique, index_key);
+            this.alternate_indexes.add(new_index);
+        }
+
+        return new_index;
+    }
+
+    /**
+     * **********************************************************************************
+     * Removes the index from the index array list ''.
+     *
+     * @param index_key attributes of the index to remove
+     * @author Jason Maurer
+     */
+    private void delete_index(String[] index_key) {
+        for (Index alternate_index : this.alternate_indexes) {
+            if (Arrays.equals(alternate_index.getIndexKey(), index_key)) {
+                out.println("Deleted index with key " + Arrays.toString(index_key));
+                alternate_indexes.remove(alternate_index);
+                return;
+            }
+        }
+    }
+
+    //Utility Methods
     public List<Comparable[]> getTuples() {
         return tuples;
     }
 
-    public MapType getMapType(){
-        return mType;
-    }
+    public void testTable() {
+        this.create_index(new String[]{"year", "length"}, true);
+        Index n = this.find_index(new String[]{"year", "length"}, true);
+        Comparable[] key_test = new Comparable[]{1978, 100};
+        Comparable[] key_test2 = new Comparable[]{1985, 200};
+        System.out.println(Arrays.toString(n.index_lookup(new KeyType(key_test))));
+        System.out.println(Arrays.toString(n.index_lookup(new KeyType(key_test2))));
+        //this.delete_index(new String[]{"year", "length"});
+        n = null;
+        n = this.find_index(new String[]{"year", "length"}, true);
+        System.out.println(Arrays.toString(n.index_lookup(new KeyType(key_test))));
 
-    public Class[] getDomain(){
-        return domain;
     }
 
 } // Table

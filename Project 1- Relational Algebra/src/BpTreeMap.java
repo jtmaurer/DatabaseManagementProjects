@@ -313,13 +313,7 @@ public class BpTreeMap <K extends Comparable <K>, V>
      */
     public V put (K key, V value)
     {
-        kCount += 1;
-        // if(is_Unique){
-        //     if(find(key) != null){
-        //         out.println("Unable to insert duplicate " + key + " key");
-        //         return null;
-        //     }
-        // }
+        kCount += 1;        
         insert (key, value, root);
         return null;
     } // put
