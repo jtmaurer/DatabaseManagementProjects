@@ -12,7 +12,8 @@ This project's goals were to speed up the implementation of the following Relati
 - Thomas Nguyen
 
 # Objective
-- Speed up the impementation of the Relational Algerbra Operators, implement BpTreeMap, create unique and non-unique indices, and use a creation method.
+- Speed up the impementation of the Relational Algerbra Operators. implement BpTreeMap, create unique and non-unique indices, and use a creation method.
+
 
 # Key Features
 
