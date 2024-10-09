@@ -44,6 +44,7 @@ class MovieDB
         var film1 = new Comparable [] { "Star_Wars_2", 1980, 124, "sciFi", "Fox", 12345 };
         var film2 = new Comparable [] { "Rocky", 1985, 200, "action", "Universal", 12125 };
         var film3 = new Comparable [] { "Rambo", 1978, 100, "action", "Universal", 32355 };
+        var film5 = new Comparable [] { "Star_Wars", 1977, 124, "sciFi", "Fox", 12345 };
 
         out.println ();
         movie.insert (film0);
@@ -51,6 +52,7 @@ class MovieDB
         movie.insert (film2);
         movie.insert (film3);
         movie.insert (film3);
+        movie.insert(film5);
         movie.print ();
 
         var film4 = new Comparable [] { "Galaxy_Quest", 1999, 104, "comedy", "DreamWorks", 67890 };
@@ -60,13 +62,15 @@ class MovieDB
         cinema.insert (film4);
         cinema.print ();
 
-        var star0 = new Comparable [] { "Carrie_Fisher", "Hollywood", 'F', "9/9/99" };
+        var star0 = new Comparable [] { "Carrie_Fisher", "Hollywood", 'F', "9/9/99" }; 
         var star1 = new Comparable [] { "Mark_Hamill", "Brentwood", 'M', "8/8/88" };
         var star2 = new Comparable [] { "Harrison_Ford", "Beverly_Hills", 'M', "7/7/77" };
+        var star3 = new Comparable [] { "Carrie_Fisher", "Hollywood", 'M', "9/9/99" }; // TESTING FOR DUPLICATE FUNCTIONALITY
         out.println ();
         movieStar.insert (star0);
         movieStar.insert (star1);
         movieStar.insert (star2);
+        movieStar.insert (star3);
         movieStar.print ();
 
         var cast0 = new Comparable [] { "Star_Wars", 1977, "Carrie_Fisher" };
@@ -83,10 +87,12 @@ class MovieDB
         var studio0 = new Comparable [] { "Fox", "Los_Angeles", 7777 };
         var studio1 = new Comparable [] { "Universal", "Universal_City", 8888 };
         var studio2 = new Comparable [] { "DreamWorks", "Universal_City", 9999 };
+        var studio3 = new Comparable [] { "DreamWorks", "Universal_City", 9999 };
         out.println ();
         studio.insert (studio0);
         studio.insert (studio1);
         studio.insert (studio2);
+        studio.insert (studio3);
         studio.print ();
 
         movie.save ();
@@ -194,6 +200,12 @@ class MovieDB
         out.println ();
         var t_join2 = movie.join (starsIn);
         t_join2.print ();
+
+        //--------------------- index-join: movie JOIN studio ON studioName = name
+
+        out.println ();
+        var i_join = movie.i_join ("studioName", "name", studio);
+        i_join.print ();
 
     } // main
 
