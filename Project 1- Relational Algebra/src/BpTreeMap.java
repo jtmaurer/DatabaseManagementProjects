@@ -328,6 +328,8 @@ public class BpTreeMap <K extends Comparable <K>, V>
      * @param ref  the value/node to insert
      * @param n    the current node
      * @return  the newly allocated right sibling node of n
+     * @author Thomas Nguyen
+     * 
      */
     @SuppressWarnings("unchecked")
     private Node insert (K key, V ref, Node n)
@@ -366,7 +368,7 @@ public class BpTreeMap <K extends Comparable <K>, V>
                     while (!urt.isLeaf) {                             // while the right node is not a leaf node
                         urt = (Node) (urt.ref[0]);                    // we can take it as refrence for the middle node
                     }
-                    rt = addI(n, urt.key[0], rt);                     // we then find the middle node and then we can add it
+                    rt = addI(n, urt.key[0], rt);                     // we then add the leaf node to the internal node
                 }
 
                 // Uses key to insert internal node
@@ -405,6 +407,8 @@ public class BpTreeMap <K extends Comparable <K>, V>
      * @param n  the current node
      * @param k  the new key
      * @param v  the new left value (ref a node)
+     * @author Thomas Nguyen
+     * 
      */
     private Node addI (Node n, K k, Node v)
     {
