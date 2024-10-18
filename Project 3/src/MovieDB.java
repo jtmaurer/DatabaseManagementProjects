@@ -51,8 +51,8 @@ class MovieDB
         movie.insert (film1);
         movie.insert (film2);
         movie.insert (film3);
-        movie.insert (film3);
-        movie.insert(film5);
+        // movie.insert (film3);
+        //movie.insert(film5);
         movie.print ();
 
         var film4 = new Comparable [] { "Galaxy_Quest", 1999, 104, "comedy", "DreamWorks", 67890 };
@@ -70,7 +70,7 @@ class MovieDB
         movieStar.insert (star0);
         movieStar.insert (star1);
         movieStar.insert (star2);
-        movieStar.insert (star3);
+        // movieStar.insert (star3);
         movieStar.print ();
 
         var cast0 = new Comparable [] { "Star_Wars", 1977, "Carrie_Fisher" };
@@ -92,7 +92,7 @@ class MovieDB
         studio.insert (studio0);
         studio.insert (studio1);
         studio.insert (studio2);
-        studio.insert (studio3);
+        // studio.insert (studio3);
         studio.print ();
 
         movie.save ();
