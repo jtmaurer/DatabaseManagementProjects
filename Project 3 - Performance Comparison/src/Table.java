@@ -716,6 +716,21 @@ public class Table
                 concat(table_1_temp_domain, table_2_condensed_domains), key, rows);
     } // join
 
+/************************************************************************************
+     * Return the column position for the given attribute name or -1 if not found.
+     *
+     * @param attr  the given attribute name
+     * @return  a column position
+     */
+    public int col (String attr)
+    {
+        for (var i = 0; i < attribute.length; i++) {
+           if (attr.equals (attribute [i])) return i;
+        } // for
+
+        return -1;       // -1 => not found
+    } // col
+
     /**
      * **********************************************************************************
      * Insert a tuple to the table.
@@ -759,6 +774,17 @@ public class Table
         } // if
     } // insert
 
+/************************************************************************************
+     * Get the tuple at index position i.
+     *
+     * @param i  the index of the tuple being sought
+     * @return  the tuple at index position i
+     */
+    public Comparable [] get (int i)
+    {
+        return tuples.get (i);
+    } // get
+
     /**
      * **********************************************************************************
      * Get the name of the table.
@@ -768,6 +794,17 @@ public class Table
     public String getName() {
         return name;
     } // getName
+
+/************************************************************************************
+     * Print tuple tup.
+     * @param tup  the array of attribute values forming the tuple
+     */
+    public void printTup (Comparable [] tup)
+    {
+        out.print ("| ");
+        for (var attr : tup) out.printf ("%15s", attr);
+        out.println (" |");
+    } // printTup
 
     /**
      * **********************************************************************************
