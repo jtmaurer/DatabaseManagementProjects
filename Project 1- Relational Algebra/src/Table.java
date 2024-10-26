@@ -31,7 +31,7 @@ import java.lang.reflect.Array;
  * manipulation operators.
  */
 public class Table
-    implements Serializable {
+        implements Serializable {
 
     /**
      * Relative path for storage directory
@@ -109,14 +109,10 @@ public class Table
             case HASH_MAP ->
                 new HashMap<>();
             //case LINHASH_MAP -> new LinHashMap <> (KeyType.class, Comparable [].class);
-            case BPTREE_MAP  -> new BpTreeMap <> (KeyType.class, Comparable [].class);
-            default -> null;
-        case NO_MAP      -> null;
-        case TREE_MAP    -> new TreeMap <> ();
-        case HASH_MAP    -> new HashMap <> ();
-        // case LINHASH_MAP -> new LinHashMap <> (KeyType.class, Comparable [].class);
-        // case BPTREE_MAP  -> new BpTreeMap <> (KeyType.class, Comparable [].class);
-        default          -> null;
+            case BPTREE_MAP ->
+                new BpTreeMap<>(KeyType.class, Comparable[].class);
+            default ->
+                null;
         }; // switch
     } // makeMap
 
@@ -208,7 +204,7 @@ public class Table
      * <p>
      * #usage movie.project ("title year studioNo")
      */
-    public Table project(String attributes) { 
+    public Table project(String attributes) {
         out.println("RA> " + name + ".project (" + attributes + ")");
         var attrs = attributes.split(" ");
         var colDomain = extractDom(match(attrs), domain);
@@ -217,29 +213,24 @@ public class Table
         List<Comparable[]> rows = new ArrayList<>();
 
         //List<Comparable> keysFound = new ArrayList<>();
-
         if (mType != MapType.NO_MAP) { // If the table has an index
-       
-        /*for (var t : tuples) { // Looping thru the entire index 
+
+            /*for (var t : tuples) { // Looping thru the entire index 
 
         if (index.get(new KeyType(extract(t, key))).equals(t)) {  // If 
             rows.add(extract(t, attrs)); 
         }
             
         } */
+            for (var t : index.values()) { // Looping through the entire index, as the index only contains distinct keys and values 
+                rows.add(extract(t, attrs));
+            }
 
-        for (var t : index.values()) { // Looping through the entire index, as the index only contains distinct keys and values 
-            rows.add(extract(t, attrs)); 
-        }
-
-     } else {
-        for (var t : tuples) { //Fallback to original implementation if no index
+        } else {
+            for (var t : tuples) { //Fallback to original implementation if no index
                 rows.add(extract(t, attrs)); // extracts the elements of each row that match the attributes specifies by the user
             }
         }
-             
-            
-        
 
         return new Table(name + count++, attrs, colDomain, newKey, rows); // returns a new table with the project function applied 
     } // project
@@ -254,7 +245,8 @@ public class Table
      * @return a table with tuples satisfying the predicate
      */
     public Table select(Predicate<Comparable[]> predicate) {
-        out.println(STR."RA> \{name}.select (\{predicate})");
+        out.println(STR.
+        "RA> \{name}.select (\{predicate})");
 
         return new Table(name + count++, attribute, domain, key,
                 tuples.stream().filter(t -> predicate.test(t))
@@ -272,7 +264,8 @@ public class Table
      * @return a table with tuples satisfying the condition
      */
     public Table select(String condition) {
-        out.println(STR."RA> \{name}.select (\{condition})");
+        out.println(STR.
+        "RA> \{name}.select (\{condition})");
 
         List<Comparable[]> rows = new ArrayList<>();
 
@@ -304,7 +297,8 @@ public class Table
      */
     private boolean satifies(Comparable[] t, int colNo, String op, String value) {
         var t_A = t[colNo];
-        out.println(STR."satisfies: \{t_A} \{op} \{value}");
+        out.println(STR.
+        "satisfies: \{t_A} \{op} \{value}");
         var valt = switch (domain[colNo].getSimpleName()) {      // type converted
             case "Byte" ->
                 Byte.valueOf(value);
@@ -352,22 +346,23 @@ public class Table
      * SELECT algorithm.
      *
      * @author Curt Leonard
-     * 
+     *
      * @param keyVal the given key value
      * @return a table with the tuple satisfying the key predicate
      */
-    public Table select(KeyType keyVal) { 
-        out.println(STR."RA> \{name}.select (\{keyVal})");
+    public Table select(KeyType keyVal) {
+        out.println(STR.
+        "RA> \{name}.select (\{keyVal})");
 
         List<Comparable[]> rows = new ArrayList<>();
 
         if (mType != MapType.NO_MAP) { // If the table has an index
             var t = index.get(keyVal); // Get the tuple if it exists s.t. key = value
-            if (t != null) { 
+            if (t != null) {
                 rows.add(t); // If the tuple exists add it to rows
             }
-       } // ? I Think this is everything i need to do but not sure until indexing is done. 
-       // ? Because this is just looking at the key value of the index, there shouldnt be a need to loop because the index won't have duplicates.
+        } // ? I Think this is everything i need to do but not sure until indexing is done. 
+        // ? Because this is just looking at the key value of the index, there shouldnt be a need to loop because the index won't have duplicates.
 
         return new Table(name + count++, attribute, domain, key, rows);
     } // select
@@ -384,13 +379,13 @@ public class Table
      * @author Curt Leonard
      */
     public Table union(Table table2) {
-        out.println(STR."RA> \{name}.union (\{table2.name})");
+        out.println(STR.
+        "RA> \{name}.union (\{table2.name})");
         if (!compatible(table2)) {
             return null;
         }
 
         List<Comparable[]> rows = new ArrayList<>();
-
 
         if (table2.mType != MapType.NO_MAP && this.mType != MapType.NO_MAP) { // If both tables have an index
 
@@ -399,25 +394,25 @@ public class Table
             }
             for (var k : this.index.keySet()) { // add all tuples from the first table
 
-                if(!table2.index.containsKey(k)) { // If the tuple doesnt exist in the second table, add it to the rows
+                if (!table2.index.containsKey(k)) { // If the tuple doesnt exist in the second table, add it to the rows
                     rows.add(this.index.get(k));
                 }
             }
-            return new Table(name + count++, attribute, domain, key, rows); 
+            return new Table(name + count++, attribute, domain, key, rows);
         } else {
             //FALLBACK TO ORIGINAL IMPLEMENTATION
 
-        // loops and adds all tuples in table
-        for (int i = 0; i < table2.tuples.size(); i++) {
-            rows.add(table2.tuples.get(i));
-        }
-        // loops and adds all tuples in the original table
-        for (int i = 0; i < this.tuples.size(); i++) {
-            rows.add(this.tuples.get(i));
-        }
+            // loops and adds all tuples in table
+            for (int i = 0; i < table2.tuples.size(); i++) {
+                rows.add(table2.tuples.get(i));
+            }
+            // loops and adds all tuples in the original table
+            for (int i = 0; i < this.tuples.size(); i++) {
+                rows.add(this.tuples.get(i));
+            }
 
-        return new Table(name + count++, attribute, domain, key, rows);
-     }
+            return new Table(name + count++, attribute, domain, key, rows);
+        }
     } // union
 
     /**
@@ -432,8 +427,9 @@ public class Table
      * @author Heeya Jolly
      * @author Curt Leonard
      */
-    public Table minus(Table table2) { 
-        out.println(STR."RA> \{name}.minus (\{table2.name})");
+    public Table minus(Table table2) {
+        out.println(STR.
+        "RA> \{name}.minus (\{table2.name})");
         if (!compatible(table2)) {
             return null; // null if not compatible 
         }
@@ -441,12 +437,12 @@ public class Table
         List<Comparable[]> rows = new ArrayList<>();
 
         if (table2.mType != MapType.NO_MAP) { // If we have an index in table 2 to lookup 
-        for (var tup : tuples) {
-            if (table2.index.get(new KeyType(extract(tup, key))) == null) { // check to see if it is in table 2 
-                rows.add(tup); // If not in table 2 add it to the new table
+            for (var tup : tuples) {
+                if (table2.index.get(new KeyType(extract(tup, key))) == null) { // check to see if it is in table 2 
+                    rows.add(tup); // If not in table 2 add it to the new table
+                }
             }
-        }
-        return new Table(name + count++, attribute, domain, key, rows); //Return new table 
+            return new Table(name + count++, attribute, domain, key, rows); //Return new table 
 
         } else { // Fallback to original implementation if no index
 
@@ -455,8 +451,8 @@ public class Table
                     rows.add(tup);
                 }
             }
-        
-        return new Table(name + count++, attribute, domain, key, rows);
+
+            return new Table(name + count++, attribute, domain, key, rows);
         }
 
     } // minus
@@ -478,7 +474,8 @@ public class Table
      * @author Jason Maurer
      */
     public Table join(String attributes1, String attributes2, Table table2) {
-        out.println(STR."RA> \{name}.join (\{attributes1}, \{attributes2}, \{table2.name})");
+        out.println(STR.
+        "RA> \{name}.join (\{attributes1}, \{attributes2}, \{table2.name})");
 
         var t_attrs = attributes1.split(" ");
         var u_attrs = attributes2.split(" ");
@@ -541,7 +538,8 @@ public class Table
      * @author Jason Maurer
      */
     public Table join(String condition, Table table2) {
-        out.println(STR."RA> \{name}.join (\{condition}, \{table2.name})");
+        out.println(STR.
+        "RA> \{name}.join (\{condition}, \{table2.name})");
 
         var rows = new ArrayList<Comparable[]>();
         var condition_array = condition.split(" ");
@@ -587,7 +585,7 @@ public class Table
      * **********************************************************************************
      * Join this table and table2 by performing an "equi-join". Same as above
      * equi-join, but implemented using an INDEXED JOIN algorithm.
-     * 
+     *
      * @author Curt Leonard
      *
      * @param attributes1 the attributes of this table to be compared (Foreign
@@ -597,54 +595,51 @@ public class Table
      * @return a table with tuples satisfying the equality predicate
      */
     public Table i_join(String attributes1, String attributes2, Table table2) {
-        
-        out.println(STR."RA> \{name}.i_join (\{attributes1}, \{attributes2}, \{table2.name})");
+
+        out.println(STR.
+        "RA> \{name}.i_join (\{attributes1}, \{attributes2}, \{table2.name})");
 
         var t_attrs = attributes1.split(" ");
         var u_attrs = attributes2.split(" ");
-        var rows = new ArrayList<Comparable[]>(); 
+        var rows = new ArrayList<Comparable[]>();
 
         //Get column indexes of each attribute
         //var t_attrs_columns = this.match(t_attrs);
         //var u_attrs_columns = table2.match(u_attrs);
-
         /**
          * Above taken from Jason's implementation of EquiJoin
          */
-
         if (table2.mType != MapType.NO_MAP && this.mType != MapType.NO_MAP) { // if both tables have index
 
-        for (var t : tuples) { // For every tuple in this table
-            var keyVal = new KeyType(extract(t, t_attrs)); // get the key value wanted 
-            var u = table2.index.get(keyVal); // check if there are matches in table 2
-            if (u != null) { // if there are matches
-                rows.add(concat(t, u)); // add concatenated tuples to rows
-            }  
-        }
-
-        String[] tAttrs = this.attribute; // Temp list of all attributes 
-        String[] uAttrs = table2.attribute; // Another list of all attributes
-
-        Map<Integer, String> domains = new HashMap<>();
-        for (var t : tAttrs) { // For every tuple in table 2
-            domains.put(1, t); // put all attributes in a map for easy checking if there are duplicates
-        } 
-        for (int i = 0; i < uAttrs.length; i++) {
-            if (!domains.containsValue(uAttrs[i])) { //Because we're changing these values, can't use a foreach loop
-                domains.put(2, uAttrs[i]);
-            } else {
-                uAttrs[i] += "2";
+            for (var t : tuples) { // For every tuple in this table
+                var keyVal = new KeyType(extract(t, t_attrs)); // get the key value wanted 
+                var u = table2.index.get(keyVal); // check if there are matches in table 2
+                if (u != null) { // if there are matches
+                    rows.add(concat(t, u)); // add concatenated tuples to rows
+                }
             }
-        }
 
-        return new Table(name + count++, concat(tAttrs, uAttrs), concat(domain, table2.domain), key, rows); // return the new table with the concatenated tuples
+            String[] tAttrs = this.attribute; // Temp list of all attributes 
+            String[] uAttrs = table2.attribute; // Another list of all attributes
+
+            Map<Integer, String> domains = new HashMap<>();
+            for (var t : tAttrs) { // For every tuple in table 2
+                domains.put(1, t); // put all attributes in a map for easy checking if there are duplicates
+            }
+            for (int i = 0; i < uAttrs.length; i++) {
+                if (!domains.containsValue(uAttrs[i])) { //Because we're changing these values, can't use a foreach loop
+                    domains.put(2, uAttrs[i]);
+                } else {
+                    uAttrs[i] += "2";
+                }
+            }
+
+            return new Table(name + count++, concat(tAttrs, uAttrs), concat(domain, table2.domain), key, rows); // return the new table with the concatenated tuples
 
         } else {
 
             return join(attributes1, attributes2, table2); // fallback to nested loop join if no index
         }
-
-        
 
     } // i_join
 
@@ -661,7 +656,8 @@ public class Table
      * @author Jason Maurer
      */
     public Table join(Table table2) {
-        out.println(STR."RA> \{name}.join (\{table2.name})");
+        out.println(STR.
+        "RA> \{name}.join (\{table2.name})");
 
         var rows = new ArrayList<Comparable[]>();
 
@@ -752,7 +748,8 @@ public class Table
      * @return whether insertion was successful
      */
     public boolean insert(Comparable[] tup) {
-        out.println(STR."DML> insert into \{name} values (\{Arrays.toString(tup)})");
+        out.println(STR.
+        "DML> insert into \{name} values (\{Arrays.toString(tup)})");
 
         if (typeCheck(tup)) {
             tuples.add(tup);
@@ -790,7 +787,8 @@ public class Table
      * Print this table.
      */
     public void print() {
-        out.println(STR."\n Table \{name}");
+        out.println(STR.
+        "\n Table \{name}");
         out.print("|-");
         out.print("---------------".repeat(attribute.length));
         out.println("-|");
@@ -819,11 +817,15 @@ public class Table
      * Print this table's index (Map).
      */
     public void printIndex() {
-        out.println(STR."\n Index for \{name}");
+        out.println(STR.
+        "\n Index for \{name}");
         out.println("-------------------");
         if (mType != MapType.NO_MAP) {
             for (var e : index.entrySet()) {
-                out.println(STR."\{e.getKey()} -> \{Arrays.toString(e.getValue())}");
+                out.println(STR.
+        
+        
+            "\{e.getKey()} -> \{Arrays.toString(e.getValue())}");
             } // for
         } // if
         out.println("-------------------");
@@ -885,7 +887,8 @@ public class Table
         } // if
         for (var j = 0; j < domain.length; j++) {
             if (domain[j] != table2.domain[j]) {
-                out.println(STR."compatible ERROR: tables disagree on domain \{j}");
+                out.println(STR.
+                "compatible ERROR: tables disagree on domain \{j}");
                 return false;
             } // if
         } // for
@@ -911,7 +914,10 @@ public class Table
                 } // for
             } // for
             if (!matched) {
-                out.println(STR."match: domain not found for \{column[j]}");
+                out.println(STR.
+        
+        
+            "match: domain not found for \{column[j]}");
             }
         } // for
 
@@ -955,14 +961,14 @@ public class Table
         for (int i = 0; i < t.length; i++) { // iterating through the tuple
 
             if (t[i].getClass() != domain[i]) { // if the class of the element does not match the class that it should be 
-                
-                java.util.logging.Logger logger =  java.util.logging.Logger.getLogger(this.getClass().getName());     
-                
+
+                java.util.logging.Logger logger = java.util.logging.Logger.getLogger(this.getClass().getName());
+
                 logger.log(Level.WARNING, "The class of the element is: " + t[i].getClass() + " \nThe class that it should be is: " + domain[i]);
                 //System.err.println("The class of the element is: " + t[i].getClass());
                 //System.err.println("The class that it should be is: " + domain[i]);
                 return false;
-                
+
             }
         }
 
@@ -981,9 +987,13 @@ public class Table
 
         for (var i = 0; i < className.length; i++) {
             try {
-                classArray[i] = Class.forName(STR."java.lang.\{className[i]}");
+                classArray[i] = Class.forName(STR. 
+            "java.lang.\{className[i]}");
             } catch (ClassNotFoundException ex) {
-                out.println(STR."findClass: \{ex}");
+                out.println(STR.
+        
+        
+            "findClass: \{ex}");
             } // try
         } // for
 
