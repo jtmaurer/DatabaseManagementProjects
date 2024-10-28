@@ -9,9 +9,8 @@
  */
 
 import java.io.Serializable;
-import java.util.*;
-
 import static java.lang.System.out;
+import java.util.*;
 
 /************************************************************************************
  * The `DIndex` class provides Direct Index maps, where keys are only implicitly stored
@@ -94,9 +93,9 @@ public class DIndex
         var s2 = new Comparable [] { pin[2], "Mary" };
 
         var sindex = new DIndex (nKeys);                     // create a Direct Index for the student table
-        sindex.put (pin[0] % nKeys, student.insert (s0));
-        sindex.put (pin[1] % nKeys, student.insert (s1));
-        sindex.put (pin[2] % nKeys, student.insert (s2));
+        // sindex.put (pin[0] % nKeys, student.insert (s0));
+        // sindex.put (pin[1] % nKeys, student.insert (s1));
+        // sindex.put (pin[2] % nKeys, student.insert (s2));
 
         student.print ();
         out.println ("Find the tuples using the pin");

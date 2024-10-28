@@ -30,7 +30,7 @@ import java.lang.reflect.Array;
  * manipulation operator is also provided. Missing are update and delete data
  * manipulation operators.
  */
-public class Table
+public class IndexTestsTable
         implements Serializable {
 
     /**
@@ -89,20 +89,20 @@ public class Table
     /**
      * The supported map types.
      */
-    private enum MapType {
+    enum MapType {
         NO_MAP, TREE_MAP, HASH_MAP, LINHASH_MAP, BPTREE_MAP
     }
 
     /**
      * The map type to be used for indices. Change as needed.
      */
-    private static final MapType mType = MapType.BPTREE_MAP;
+    private final MapType mType;
 
     /**
      * **********************************************************************************
      * Make a map (index) given the MapType.
      */
-    private static Map<KeyType, Comparable[]> makeMap() {
+    private Map<KeyType, Comparable[]> makeMap() {
         return switch (mType) {
             case NO_MAP ->
                 null;
@@ -146,7 +146,7 @@ public class Table
      * @param _domain the string containing attribute domains (data types)
      * @param _key the primary key
      */
-    public Table(String _name, String[] _attribute, Class[] _domain, String[] _key) {
+    public IndexTestsTable(String _name, String[] _attribute, Class[] _domain, String[] _key, MapType mType) {
         name = _name;
         attribute = _attribute;
         domain = _domain;
@@ -154,6 +154,7 @@ public class Table
         tuples = new ArrayList<>();
         index = makeMap();
         out.println(Arrays.toString(domain));
+        this.mType = mType;
     } // constructor
 
     /**
@@ -167,14 +168,15 @@ public class Table
      * @param _key the primary key
      * @param _tuples the list of tuples containing the data
      */
-    public Table(String _name, String[] _attribute, Class[] _domain, String[] _key,
-            List<Comparable[]> _tuples) {
+    public IndexTestsTable(String _name, String[] _attribute, Class[] _domain, String[] _key,
+            List<Comparable[]> _tuples, MapType mType) {
         name = _name;
         attribute = _attribute;
         domain = _domain;
         key = _key;
         tuples = _tuples;
         index = makeMap();
+        this.mType = mType;
     } // constructor
 
     /**
@@ -186,10 +188,10 @@ public class Table
      * @param domains the string containing attribute domains (data types)
      * @param _key the primary key
      */
-    public Table(String _name, String attributes, String domains, String _key) {
-        this(_name, attributes.split(" "), findClass(domains.split(" ")), _key.split(" "));
+    public IndexTestsTable(String _name, String attributes, String domains, String _key, MapType mType) {
+        this(_name, attributes.split(" "), findClass(domains.split(" ")), _key.split(" "), mType);
 
-        out.println(STR."DDL> create table \{name} (\{attributes})");
+        out.println("DDL> create table \{name} (\{attributes})");
     } // constructor
 
     //----------------------------------------------------------------------------------
