@@ -89,6 +89,10 @@ public class KeyType
         return s + (" )");
     } // toString
 
+    public String toStringTesting(){
+        return key[0] + "";
+    }
+
     /*************************************************************************************
      * The main method is used for testing purposes only.
      * @param args  the command-line arguments

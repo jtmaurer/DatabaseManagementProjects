@@ -40,7 +40,7 @@ public class BpTreeMap<K extends Comparable<K>, V>
         implements Serializable, Cloneable // , SortedMap <K, V>
 {
 
-    private static final boolean DEBUG = true;                        // debug flag
+    private static final boolean DEBUG = false;                        // debug flag
 
     private static final int ORDER = 5;                               // maximum number of children for a B+Tree node.
     private static final int HALF = (ORDER - 1) / 2;                 // half of max keys (floor)
@@ -381,9 +381,9 @@ public class BpTreeMap<K extends Comparable<K>, V>
      */
     @SuppressWarnings("unchecked")
     private Node insert(K key, V ref, Node n) {
-        out.println("=============================================================");
-        out.println(STR."insert: key \{key}");
-        out.println("=============================================================");
+        // out.println("=============================================================");
+        // out.println(STR."insert: key \{key}");
+        // out.println("=============================================================");
 
         Node rt = null;                                               // holder right sibling node
 

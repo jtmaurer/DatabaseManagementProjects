@@ -14,7 +14,7 @@ import java.util.function.*;
 import java.util.stream.*;
 
 import static java.lang.Boolean.*;
-import static java.lang.StringTemplate.STR;
+// import static java.lang.StringTemplate.STR;
 //import static java.lang.StringTemplate.STR;
 import static java.lang.System.arraycopy;
 import static java.lang.System.out;

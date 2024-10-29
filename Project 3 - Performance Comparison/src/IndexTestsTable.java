@@ -24,11 +24,8 @@ import java.lang.reflect.Array;
 
 /**
  * **************************************************************************************
- * The Table class implements relational database tables (including attribute
- * names, domains and a list of tuples. Five basic relational algebra operators
- * are provided: project, select, union, minus and join. The insert data
- * manipulation operator is also provided. Missing are update and delete data
- * manipulation operators.
+ * Copy of table class, but has changes such as being able to set the map type through construction,
+ * among other changes to make testing more convenient.
  */
 public class IndexTestsTable
         implements Serializable {
@@ -84,7 +81,7 @@ public class IndexTestsTable
     /**
      * Indexes besides the unique primary key index.
      */
-    private ArrayList<Index> alternate_indexes;
+    private ArrayList<IndexVersionTwo> alternate_indexes;
 
     /**
      * The supported map types.
@@ -96,7 +93,7 @@ public class IndexTestsTable
     /**
      * The map type to be used for indices. Change as needed.
      */
-    private final MapType mType;
+    public final MapType mType;
 
     /**
      * **********************************************************************************
@@ -152,9 +149,9 @@ public class IndexTestsTable
         domain = _domain;
         key = _key;
         tuples = new ArrayList<>();
-        index = makeMap();
-        out.println(Arrays.toString(domain));
         this.mType = mType;
+        index = makeMap();
+        // out.println(Arrays.toString(domain));
     } // constructor
 
     /**
@@ -175,8 +172,8 @@ public class IndexTestsTable
         domain = _domain;
         key = _key;
         tuples = _tuples;
-        index = makeMap();
         this.mType = mType;
+        index = makeMap();
     } // constructor
 
     /**
@@ -191,7 +188,7 @@ public class IndexTestsTable
     public IndexTestsTable(String _name, String attributes, String domains, String _key, MapType mType) {
         this(_name, attributes.split(" "), findClass(domains.split(" ")), _key.split(" "), mType);
 
-        out.println("DDL> create table \{name} (\{attributes})");
+      //  System.out.println("DDL> create table \{name} (\{attributes})");
     } // constructor
 
     //----------------------------------------------------------------------------------
@@ -241,7 +238,7 @@ public class IndexTestsTable
      * @return a table with tuples satisfying the predicate
      */
     public Table select(Predicate<Comparable[]> predicate) {
-        out.println(STR."RA> \{name}.select (\{predicate})");
+        // out.println(STR."RA> \{name}.select (\{predicate})");
 
         return new Table(name + count++, attribute, domain, key,
                 tuples.stream().filter(t -> predicate.test(t))
@@ -258,8 +255,8 @@ public class IndexTestsTable
      * @param condition the check condition as a string for tuples
      * @return a table with tuples satisfying the condition
      */
-    public Table select(String condition) {
-        out.println(STR."RA> \{name}.select (\{condition})");
+    public IndexTestsTable select(String condition) {
+        // out.println(STR."RA> \{name}.select (\{condition})");
 
         List<Comparable[]> rows = new ArrayList<>();
 
@@ -272,7 +269,7 @@ public class IndexTestsTable
             }
         } // for
 
-        return new Table(name + count++, attribute, domain, key, rows);
+        return new IndexTestsTable(name + count++, attribute, domain, key, rows, mType);
     } // select
 
     /**
@@ -291,7 +288,7 @@ public class IndexTestsTable
      */
     private boolean satifies(Comparable[] t, int colNo, String op, String value) {
         var t_A = t[colNo];
-        out.println(STR."satisfies: \{t_A} \{op} \{value}");
+        // out.println(STR."satisfies: \{t_A} \{op} \{value}");
         var valt = switch (domain[colNo].getSimpleName()) {      // type converted
             case "Byte" ->
                 Byte.valueOf(value);
@@ -343,20 +340,24 @@ public class IndexTestsTable
      * @param keyVal the given key value
      * @return a table with the tuple satisfying the key predicate
      */
-    public Table select(KeyType keyVal) {
-        out.println(STR."RA> \{name}.select (\{keyVal})");
+    public IndexTestsTable select(KeyType keyVal) {
+        // out.println(STR."RA> \{name}.select (\{keyVal})");
 
         List<Comparable[]> rows = new ArrayList<>();
 
         if (mType != MapType.NO_MAP) { // If the table has an index
             var t = index.get(keyVal); // Get the tuple if it exists s.t. key = value
             if (t != null) {
+                // System.out.println("Found tuple");
                 rows.add(t); // If the tuple exists add it to rows
             }
-        } // ? I Think this is everything i need to do but not sure until indexing is done. 
+        } else {
+            return select(key[0] + " == " + keyVal.toStringTesting());  
+        }
+            // ? I Think this is everything i need to do but not sure until indexing is done. 
         // ? Because this is just looking at the key value of the index, there shouldnt be a need to loop because the index won't have duplicates.
 
-        return new Table(name + count++, attribute, domain, key, rows);
+        return new IndexTestsTable(name + count++, attribute, domain, key, rows, mType);
     } // select
 
     /**
@@ -370,7 +371,7 @@ public class IndexTestsTable
      * @author Thomas Nguyen
      * @author Curt Leonard
      */
-    public Table union(Table table2) {
+    public Table union(IndexTestsTable table2) {
         out.println(STR."RA> \{name}.union (\{table2.name})");
         if (!compatible(table2)) {
             return null;
@@ -418,7 +419,7 @@ public class IndexTestsTable
      * @author Heeya Jolly
      * @author Curt Leonard
      */
-    public Table minus(Table table2) {
+    public Table minus(IndexTestsTable table2) {
         out.println(STR."RA> \{name}.minus (\{table2.name})");
         if (!compatible(table2)) {
             return null; // null if not compatible 
@@ -462,8 +463,8 @@ public class IndexTestsTable
      * @return a table with tuples satisfying the equality predicate
      * @author Jason Maurer
      */
-    public Table join(String attributes1, String attributes2, Table table2) {
-        out.println(STR."RA> \{name}.join (\{attributes1}, \{attributes2}, \{table2.name})");
+    public Table join(String attributes1, String attributes2, IndexTestsTable table2) {
+        // out.println(STR."RA> \{name}.join (\{attributes1}, \{attributes2}, \{table2.name})");
 
         var t_attrs = attributes1.split(" ");
         var u_attrs = attributes2.split(" ");
@@ -525,7 +526,7 @@ public class IndexTestsTable
      * @return a table with tuples satisfying the condition
      * @author Jason Maurer
      */
-    public Table join(String condition, Table table2) {
+    public Table join(String condition, IndexTestsTable table2) {
         out.println(STR."RA> \{name}.join (\{condition}, \{table2.name})");
 
         var rows = new ArrayList<Comparable[]>();
@@ -581,9 +582,9 @@ public class IndexTestsTable
      * @param table2 the rhs table in the join operation
      * @return a table with tuples satisfying the equality predicate
      */
-    public Table i_join(String attributes1, String attributes2, Table table2) {
+    public Table i_join(String attributes1, String attributes2, IndexTestsTable table2) {
 
-        out.println(STR."RA> \{name}.i_join (\{attributes1}, \{attributes2}, \{table2.name})");
+        // out.println(STR."RA> \{name}.i_join (\{attributes1}, \{attributes2}, \{table2.name})");
 
         var t_attrs = attributes1.split(" ");
         var u_attrs = attributes2.split(" ");
@@ -593,7 +594,7 @@ public class IndexTestsTable
 
             for (var t : tuples) { // For every tuple in this table
                 var keyVal = new KeyType(extract(t, t_attrs)); // get the key value wanted 
-                Index table_2_specified_index = table2.create_index(u_attrs, false);
+                IndexVersionTwo table_2_specified_index = table2.create_index(u_attrs, false);
                 var u = table_2_specified_index.index_lookup(keyVal); // check if there are matches in table 2
                 if (u != null) { // if there are matches
                     rows.add(concat(t, u)); // add concatenated tuples to rows
@@ -636,7 +637,7 @@ public class IndexTestsTable
      * @return a table with tuples satisfying the equality predicate
      * @author Jason Maurer
      */
-    public Table join(Table table2) {
+    public Table join(IndexTestsTable table2) {
         out.println(STR."RA> \{name}.join (\{table2.name})");
 
         var rows = new ArrayList<Comparable[]>();
@@ -743,7 +744,7 @@ public class IndexTestsTable
      * @return whether insertion was successful
      */
     public boolean insert(Comparable[] tup) {
-        out.println(STR."DML> insert into \{name} values (\{Arrays.toString(tup)})");
+        // out.println(STR."DML> insert into \{name} values (\{Arrays.toString(tup)})");
 
         if (typeCheck(tup)) {
             var keyVal = new Comparable[key.length];
@@ -765,7 +766,7 @@ public class IndexTestsTable
             if (mType != MapType.NO_MAP) {
                 index.put(new KeyType(keyVal), tup);
                 if (this.alternate_indexes != null) {
-                    for (Index ind : this.alternate_indexes) {
+                    for (IndexVersionTwo ind : this.alternate_indexes) {
                         ind.insertTuple(tup);
                     }
                 }
@@ -880,7 +881,7 @@ public class IndexTestsTable
      */
     public void save() {
         Map<KeyType, Comparable[]> temp_index = this.index;
-        ArrayList<Index> temp_alternate_indexes = this.alternate_indexes;
+        ArrayList<IndexVersionTwo> temp_alternate_indexes = this.alternate_indexes;
         try {
             this.index = null;
             this.alternate_indexes = null;
@@ -908,7 +909,7 @@ public class IndexTestsTable
      * @param table2 the rhs table
      * @return whether the two tables are compatible
      */
-    private boolean compatible(Table table2) {
+    private boolean compatible(IndexTestsTable table2) {
         if (domain.length != table2.domain.length) {
             out.println("compatible ERROR: table have different arity");
             return false;
@@ -1013,7 +1014,7 @@ public class IndexTestsTable
             try {
                 classArray[i] = Class.forName(STR."java.lang.\{className[i]}");
             } catch (ClassNotFoundException ex) {
-                out.println(STR."findClass: \{ex}");
+                System.out.println(STR."findClass: \{ex}");
             } // try
         } // for
 
@@ -1068,15 +1069,15 @@ public class IndexTestsTable
      * @return An Index type which contains the map of the index
      * @author Jason Maurer
      */
-    private Index find_index(String[] index_key, Boolean _is_Unique) {
-        for (Index alternate_index : this.alternate_indexes) {
+    private IndexVersionTwo find_index(String[] index_key, Boolean _is_Unique) {
+        for (IndexVersionTwo alternate_index : this.alternate_indexes) {
             if (Arrays.equals(alternate_index.getIndexKey(), index_key)) {
                 if (_is_Unique == alternate_index.isUnique()) {
                     return alternate_index;
                 }
             }
         }
-        out.println("Couldn't find index with key " + Arrays.toString(index_key) + " and is_Unique: " + _is_Unique);
+        // out.println("Couldn't find index with key " + Arrays.toString(index_key) + " and is_Unique: " + _is_Unique);
         return null;
     }
 
@@ -1089,16 +1090,16 @@ public class IndexTestsTable
      * @param _is_Unique boolean for if the index is unique
      * @author Jason Maurer
      */
-    public Index create_index(String[] index_key, Boolean _is_Unique) {
+    public IndexVersionTwo create_index(String[] index_key, Boolean _is_Unique) {
         if (this.alternate_indexes == null) {
-            this.alternate_indexes = new ArrayList<Index>();
+            this.alternate_indexes = new ArrayList<IndexVersionTwo>();
         }
 
-        Index new_index = this.find_index(index_key, _is_Unique);
+        IndexVersionTwo new_index = this.find_index(index_key, _is_Unique);
 
         if (new_index == null) {
             this.drop_index(index_key);
-            new_index = new Index(makeMap(), this, _is_Unique, index_key);
+            new_index = new IndexVersionTwo(makeMap(), this, _is_Unique, index_key);
             this.alternate_indexes.add(new_index);
         }
 
@@ -1113,7 +1114,7 @@ public class IndexTestsTable
      * @author Jason Maurer
      */
     private void drop_index(String[] index_key) {
-        for (Index alternate_index : this.alternate_indexes) {
+        for (IndexVersionTwo alternate_index : this.alternate_indexes) {
             if (Arrays.equals(alternate_index.getIndexKey(), index_key)) {
                 out.println("Deleted index with key " + Arrays.toString(index_key));
                 alternate_indexes.remove(alternate_index);
@@ -1127,19 +1128,23 @@ public class IndexTestsTable
         return tuples;
     }
 
-    public void testTable() {
-        this.create_index(new String[]{"year", "length"}, true);
-        Index n = this.find_index(new String[]{"year", "length"}, true);
-        Comparable[] key_test = new Comparable[]{1978, 100};
-        Comparable[] key_test2 = new Comparable[]{1985, 200};
-        System.out.println(Arrays.toString(n.index_lookup(new KeyType(key_test))));
-        System.out.println(Arrays.toString(n.index_lookup(new KeyType(key_test2))));
-        //this.drop_index(new String[]{"year", "length"});
-        n = null;
-        n = this.find_index(new String[]{"year", "length"}, true);
-        System.out.println(Arrays.toString(n.index_lookup(new KeyType(key_test))));
-
+    public int getTupleLength() {
+        return tuples.size();
     }
+
+    // public void testTable() {
+    //     this.create_index(new String[]{"year", "length"}, true);
+    //     Index n = this.find_index(new String[]{"year", "length"}, true);
+    //     Comparable[] key_test = new Comparable[]{1978, 100};
+    //     Comparable[] key_test2 = new Comparable[]{1985, 200};
+    //     System.out.println(Arrays.toString(n.index_lookup(new KeyType(key_test))));
+    //     System.out.println(Arrays.toString(n.index_lookup(new KeyType(key_test2))));
+    //     //this.drop_index(new String[]{"year", "length"});
+    //     n = null;
+    //     n = this.find_index(new String[]{"year", "length"}, true);
+    //     System.out.println(Arrays.toString(n.index_lookup(new KeyType(key_test))));
+
+    // }
 
 } // Table
 

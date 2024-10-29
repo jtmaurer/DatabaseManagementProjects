@@ -1,3 +1,3 @@
 #!/bin/bash
 
-java -cp  bin --enable-preview TestTupleGenerator
+java -cp  bin --enable-preview TimingComparisonScript
