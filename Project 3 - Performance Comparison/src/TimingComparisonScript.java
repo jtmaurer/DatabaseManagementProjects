@@ -143,27 +143,27 @@ class TimingComparisonScript {
                 select_test_key_two = "studioName817983"; // studio - studioName
             }
             case 20000 -> {
-                select_test_key_one = 700278; //movieExec - producerNo
-                select_test_key_two = "studioName336742"; // studio - studioName
+                select_test_key_one = 803120; //movieExec - producerNo
+                select_test_key_two = "studioName919878"; // studio - studioName
             }
             case 30000 -> {
-                select_test_key_one = 964986; //movieExec - producerNo
-                select_test_key_two = "studioName72930"; // studio - studioName
+                select_test_key_one = 975011; //movieExec - producerNo
+                select_test_key_two = "studioName813852"; // studio - studioName
 
             }
             case 40000 -> {
-                select_test_key_one = 621075; //movieExec - producerNo
-                select_test_key_two = "studioName287536"; // studio - studioName
+                select_test_key_one = 760809; //movieExec - producerNo
+                select_test_key_two = "studioName174769"; // studio - studioName
 
             }
             case 50000 -> {
-                select_test_key_one = 907222; //movieExec - producerNo
-                select_test_key_two = "studioName800733"; // studio - studioName
+                select_test_key_one = 578052; //movieExec - producerNo
+                select_test_key_two = "studioName251754"; // studio - studioName
 
             }
             case 100000 -> {
-                select_test_key_one = 276141; //movieExec - producerNo
-                select_test_key_two = "studioName983410"; // studio - studioName
+                select_test_key_one = 776436; //movieExec - producerNo
+                select_test_key_two = "studioName358324"; // studio - studioName
 
             }
             default -> {
@@ -236,6 +236,20 @@ class TimingComparisonScript {
         fifty_k_tuple_set = load("fifty_k_tuple_sets");
         hundred_k_tuple_set = load("hundred_k_tuple_sets");
         System.out.println("Finished loading");
+
+        // System.out.println(Arrays.toString(ten_k_tuple_set[0][5000]));
+        // System.out.println(Arrays.toString(ten_k_tuple_set[1][5000]));
+        // System.out.println(Arrays.toString(twenty_k_tuple_set[0][10000]));
+        // System.out.println(Arrays.toString(twenty_k_tuple_set[1][10000]));
+        // System.out.println(Arrays.toString(thirty_k_tuple_set[0][15000]));
+        // System.out.println(Arrays.toString(thirty_k_tuple_set[1][15000]));
+        // System.out.println(Arrays.toString(forty_k_tuple_set[0][20000]));
+        // System.out.println(Arrays.toString(forty_k_tuple_set[1][20000]));
+        // System.out.println(Arrays.toString(fifty_k_tuple_set[0][25000]));
+        // System.out.println(Arrays.toString(fifty_k_tuple_set[1][25000]));
+        // System.out.println(Arrays.toString(hundred_k_tuple_set[0][50000]));
+        // System.out.println(Arrays.toString(hundred_k_tuple_set[1][50000]));
+        // return;
 
         // 10K Tuple Test Cases ********************************************************************************************************************
         // NO_MAP 
@@ -371,16 +385,3 @@ class TimingComparisonScript {
 
     }
 }
-
-// System.out.println(Arrays.toString(ten_k_tuple_set[0][5000]));
-// System.out.println(Arrays.toString(ten_k_tuple_set[1][5000]));
-// System.out.println(Arrays.toString(twenty_k_tuple_set[0][5000]));
-// System.out.println(Arrays.toString(twenty_k_tuple_set[1][5000]));
-// System.out.println(Arrays.toString(thirty_k_tuple_set[0][5000]));
-// System.out.println(Arrays.toString(thirty_k_tuple_set[1][5000]));
-// System.out.println(Arrays.toString(forty_k_tuple_set[0][5000]));
-// System.out.println(Arrays.toString(forty_k_tuple_set[1][5000]));
-// System.out.println(Arrays.toString(fifty_k_tuple_set[0][5000]));
-// System.out.println(Arrays.toString(fifty_k_tuple_set[1][5000]));
-// System.out.println(Arrays.toString(hundred_k_tuple_set[0][5000]));
-        // System.out.println(Arrays.toString(hundred_k_tuple_set[1][5000]));

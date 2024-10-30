@@ -1,0 +1,123 @@
+10/30/24 Jason
+Starting
+Finished loading
+10000, NO_MAP Timing Test cases
+Select case one Average time: 3524 mu-sec
+Select case two Average time: 1975 mu-sec
+Join case one Average time: 1455690 mu-sec
+Join case two Average time: 1384725 mu-sec
+10000, TREE_MAP Timing Test cases
+Select case one Average time: 12 mu-sec
+Select case two Average time: 10 mu-sec
+Join case one Average time: 19491 mu-sec
+Join case two Average time: 12453 mu-sec
+10000, HASH_MAP Timing Test cases
+Select case one Average time: 88 mu-sec
+Select case two Average time: 70 mu-sec
+Join case one Average time: 7650 mu-sec
+Join case two Average time: 4715 mu-sec
+10000, BPTREE_MAP Timing Test cases
+Select case one Average time: 10 mu-sec
+Select case two Average time: 10 mu-sec
+Join case one Average time: 18710 mu-sec
+Join case two Average time: 43518 mu-sec
+20000, NO_MAP Timing Test cases
+Select case one Average time: 1934 mu-sec
+Select case two Average time: 1179 mu-sec
+Join case one Average time: 5985439 mu-sec
+Join case two Average time: 9477423 mu-sec
+20000, TREE_MAP Timing Test cases
+Select case one Average time: 48 mu-sec
+Select case two Average time: 11 mu-sec
+Join case one Average time: 23291 mu-sec
+Join case two Average time: 45200 mu-sec
+20000, HASH_MAP Timing Test cases
+Select case one Average time: 67 mu-sec
+Select case two Average time: 21 mu-sec
+Join case one Average time: 5910 mu-sec
+Join case two Average time: 7086 mu-sec
+20000, BPTREE_MAP Timing Test cases
+Select case one Average time: 12 mu-sec
+Select case two Average time: 44 mu-sec
+Join case one Average time: 29271 mu-sec
+Join case two Average time: 43462 mu-sec
+30000, NO_MAP Timing Test cases
+Select case one Average time: 5057 mu-sec
+Select case two Average time: 2390 mu-sec
+Join case one Average time: 13207300 mu-sec
+Join case two Average time: 19006705 mu-sec
+30000, TREE_MAP Timing Test cases
+Select case one Average time: 47 mu-sec
+Select case two Average time: 4 mu-sec
+Join case one Average time: 24845 mu-sec
+Join case two Average time: 33692 mu-sec
+30000, HASH_MAP Timing Test cases
+Select case one Average time: 8 mu-sec
+Select case two Average time: 9 mu-sec
+Join case one Average time: 17412 mu-sec
+Join case two Average time: 12835 mu-sec
+30000, BPTREE_MAP Timing Test cases
+Select case one Average time: 2 mu-sec
+Select case two Average time: 4 mu-sec
+Join case one Average time: 24401 mu-sec
+Join case two Average time: 39329 mu-sec
+40000, NO_MAP Timing Test cases
+Select case one Average time: 1773 mu-sec
+Select case two Average time: 1246 mu-sec
+Join case one Average time: 28048974 mu-sec
+Join case two Average time: 27950111 mu-sec
+40000, TREE_MAP Timing Test cases
+Select case one Average time: 12 mu-sec
+Select case two Average time: 13 mu-sec
+Join case one Average time: 36922 mu-sec
+Join case two Average time: 47073 mu-sec
+40000, HASH_MAP Timing Test cases
+Select case one Average time: 6 mu-sec
+Select case two Average time: 8 mu-sec
+Join case one Average time: 15641 mu-sec
+Join case two Average time: 18367 mu-sec
+40000, BPTREE_MAP Timing Test cases
+Select case one Average time: 18 mu-sec
+Select case two Average time: 13 mu-sec
+Join case one Average time: 45784 mu-sec
+Join case two Average time: 58405 mu-sec
+50000, NO_MAP Timing Test cases
+Select case one Average time: 2593 mu-sec
+Select case two Average time: 2063 mu-sec
+Join case one Average time: 43840291 mu-sec
+Join case two Average time: 49085766 mu-sec
+50000, TREE_MAP Timing Test cases
+Select case one Average time: 12 mu-sec
+Select case two Average time: 39 mu-sec
+Join case one Average time: 112149 mu-sec
+Join case two Average time: 67625 mu-sec
+50000, HASH_MAP Timing Test cases
+Select case one Average time: 38 mu-sec
+Select case two Average time: 5 mu-sec
+Join case one Average time: 29110 mu-sec
+Join case two Average time: 30456 mu-sec
+50000, BPTREE_MAP Timing Test cases
+Select case one Average time: 8 mu-sec
+Select case two Average time: 11 mu-sec
+Join case one Average time: 78146 mu-sec
+Join case two Average time: 83008 mu-sec
+100000, NO_MAP Timing Test cases
+Select case one Average time: 4513 mu-sec
+Select case two Average time: 3483 mu-sec
+Join case one Average time: 189872717 mu-sec
+Join case two Average time: 197612265 mu-sec
+100000, TREE_MAP Timing Test cases
+Select case one Average time: 40 mu-sec
+Select case two Average time: 24 mu-sec
+Join case one Average time: 109901 mu-sec
+Join case two Average time: 151341 mu-sec
+100000, HASH_MAP Timing Test cases
+Select case one Average time: 4 mu-sec
+Select case two Average time: 0 mu-sec
+Join case one Average time: 47232 mu-sec
+Join case two Average time: 43554 mu-sec
+100000, BPTREE_MAP Timing Test cases
+Select case one Average time: 25 mu-sec
+Select case two Average time: 15 mu-sec
+Join case one Average time: 149819 mu-sec
+Join case two Average time: 191556 mu-sec
