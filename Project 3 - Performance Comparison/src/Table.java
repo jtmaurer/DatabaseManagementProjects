@@ -90,7 +90,7 @@ public class Table
      * The supported map types.
      */
     private enum MapType {
-        NO_MAP, TREE_MAP, HASH_MAP, LINHASH_MAP, BPTREE_MAP
+        NO_MAP, TREE_MAP, HASH_MAP, LINHASH_MAP, BPTREE_MAP, DINDEX_MAP
     }
 
     /**
@@ -113,6 +113,8 @@ public class Table
             //case LINHASH_MAP -> new LinHashMap <> (KeyType.class, Comparable [].class);
             case BPTREE_MAP ->
                 new BpTreeMap<>(KeyType.class, Comparable[].class);
+            /*case DINDEX_MAP ->
+                new DIndex(200000); */
             default ->
                 null;
         }; // switch

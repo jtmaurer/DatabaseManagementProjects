@@ -72,7 +72,16 @@ public class DIndex
      */
     public Set <Map.Entry <Integer, Integer>> entrySet ()
     {
-        return null;                                                 // not supported
+        
+        Set<Map.Entry<Integer, Integer>> entrySet = new HashSet<>();
+        for (int i = 0; i < dindex.length; i++) {
+            if (dindex[i] != -1) {
+                entrySet.add(new AbstractMap.SimpleEntry<>(i, dindex[i]));
+            }
+        }
+        return entrySet;
+        
+        //return null;                                                 // not supported
     } // entrySet
 
     /********************************************************************************

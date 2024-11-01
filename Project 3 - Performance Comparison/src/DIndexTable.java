@@ -24,10 +24,9 @@ import java.lang.reflect.Array;
 
 /**
  * **************************************************************************************
- * Copy of table class, but has changes such as being able to set the map type through construction,
- * among other changes to make testing more convenient.
+ * Copy of table class but allows implementation of BIndex. This only implements indexed select and join.  
  */
-public class IndexTestsTable
+public class DIndexTable
         implements Serializable {
 
     /**
@@ -74,7 +73,7 @@ public class IndexTestsTable
     /**
      * Index into tuples (maps key to tuple).
      */
-    private Map<KeyType, Comparable[]> index;
+    private DIndex index;
 
     private final HashSet<List<Comparable>> uniqueKeysSet = new HashSet<List<Comparable>>();
 
@@ -84,36 +83,11 @@ public class IndexTestsTable
     private ArrayList<IndexVersionTwo> alternate_indexes;
 
     /**
-     * The supported map types.
-     */
-    enum MapType {
-        NO_MAP, TREE_MAP, HASH_MAP, LINHASH_MAP, BPTREE_MAP, DINDEX_MAP
-    }
-
-    /**
-     * The map type to be used for indices. Change as needed.
-     */
-    public final MapType mType;
-
-    /**
      * **********************************************************************************
-     * Make a map (index) given the MapType.
+     * Create the DIndex.
      */
-    private Map<KeyType, Comparable[]> makeMap() {
-        return switch (mType) {
-            case NO_MAP ->
-                null;
-            case TREE_MAP ->
-                new TreeMap<>();
-            case HASH_MAP ->
-                new HashMap<>();
-            //case LINHASH_MAP -> new LinHashMap <> (KeyType.class, Comparable [].class);
-            case BPTREE_MAP ->
-                new BpTreeMap<>(KeyType.class, Comparable[].class);
-            
-            default ->
-                null;
-        }; // switch
+    private DIndex makeMap() {
+        return new DIndex(tuples.size());
     } // makeMap
 
     /**
@@ -144,13 +118,12 @@ public class IndexTestsTable
      * @param _domain the string containing attribute domains (data types)
      * @param _key the primary key
      */
-    public IndexTestsTable(String _name, String[] _attribute, Class[] _domain, String[] _key, MapType mType) {
+    public DIndexTable(String _name, String[] _attribute, Class[] _domain, String[] _key) {
         name = _name;
         attribute = _attribute;
         domain = _domain;
         key = _key;
         tuples = new ArrayList<>();
-        this.mType = mType;
         index = makeMap();
         // out.println(Arrays.toString(domain));
     } // constructor
@@ -166,14 +139,13 @@ public class IndexTestsTable
      * @param _key the primary key
      * @param _tuples the list of tuples containing the data
      */
-    public IndexTestsTable(String _name, String[] _attribute, Class[] _domain, String[] _key,
-            List<Comparable[]> _tuples, MapType mType) {
+    public DIndexTable(String _name, String[] _attribute, Class[] _domain, String[] _key,
+            List<Comparable[]> _tuples) {
         name = _name;
         attribute = _attribute;
         domain = _domain;
         key = _key;
         tuples = _tuples;
-        this.mType = mType;
         index = makeMap();
     } // constructor
 
@@ -186,8 +158,8 @@ public class IndexTestsTable
      * @param domains the string containing attribute domains (data types)
      * @param _key the primary key
      */
-    public IndexTestsTable(String _name, String attributes, String domains, String _key, MapType mType) {
-        this(_name, attributes.split(" "), findClass(domains.split(" ")), _key.split(" "), mType);
+    public DIndexTable(String _name, String attributes, String domains, String _key) {
+        this(_name, attributes.split(" "), findClass(domains.split(" ")), _key.split(" "));
 
       //  System.out.println("DDL> create table \{name} (\{attributes})");
     } // constructor
@@ -206,7 +178,7 @@ public class IndexTestsTable
      * <p>
      * #usage movie.project ("title year studioNo")
      */
-    public Table project(String attributes) {
+    /*public Table project(String attributes) {
         out.println("RA> " + name + ".project (" + attributes + ")");
         var attrs = attributes.split(" ");
         var colDomain = extractDom(match(attrs), domain);
@@ -227,7 +199,7 @@ public class IndexTestsTable
             }
         }
         return new Table(name + count++, attrs, colDomain, newKey, rows); // returns a new table with the project function applied 
-    } // project
+    } // project */
 
     /**
      * **********************************************************************************
@@ -238,13 +210,13 @@ public class IndexTestsTable
      * @param predicate the check condition for tuples
      * @return a table with tuples satisfying the predicate
      */
-    public Table select(Predicate<Comparable[]> predicate) {
+   /*  public Table select(Predicate<Comparable[]> predicate) {
         // out.println(STR."RA> \{name}.select (\{predicate})");
 
         return new Table(name + count++, attribute, domain, key,
                 tuples.stream().filter(t -> predicate.test(t))
                         .collect(Collectors.toList()));
-    } // select
+    } // select */
 
     /**
      * **********************************************************************************
@@ -256,7 +228,7 @@ public class IndexTestsTable
      * @param condition the check condition as a string for tuples
      * @return a table with tuples satisfying the condition
      */
-    public IndexTestsTable select(String condition) {
+    /*public DIndexTable select(String condition) {
         // out.println(STR."RA> \{name}.select (\{condition})");
 
         List<Comparable[]> rows = new ArrayList<>();
@@ -270,8 +242,8 @@ public class IndexTestsTable
             }
         } // for
 
-        return new IndexTestsTable(name + count++, attribute, domain, key, rows, mType);
-    } // select
+        return new DIndexTable(name + count++, attribute, domain, key, rows);
+    } // select*/
 
     /**
      * @author Ridhima Reddy //run tests select
@@ -341,24 +313,18 @@ public class IndexTestsTable
      * @param keyVal the given key value
      * @return a table with the tuple satisfying the key predicate
      */
-    public IndexTestsTable select(KeyType keyVal) {
+    public DIndexTable select(KeyType keyVal) { //TODO: Implement this
         // out.println(STR."RA> \{name}.select (\{keyVal})");
 
         List<Comparable[]> rows = new ArrayList<>();
 
-        if (mType != MapType.NO_MAP) { // If the table has an index
-            var t = index.get(keyVal); // Get the tuple if it exists s.t. key = value
-            if (t != null) {
+        
+            int t = index.get(keyVal); // Get the tuple if it exists s.t. key = value
+            if (t != -1) {
                 // System.out.println("Found tuple");
-                rows.add(t); // If the tuple exists add it to rows
+                rows.add(tuples.get(t)); // If the tuple exists add it to rows
             }
-        } else {
-            return select(key[0] + " == " + keyVal.toStringTesting());  
-        }
-            // ? I Think this is everything i need to do but not sure until indexing is done. 
-        // ? Because this is just looking at the key value of the index, there shouldnt be a need to loop because the index won't have duplicates.
-
-        return new IndexTestsTable(name + count++, attribute, domain, key, rows, mType);
+        return new DIndexTable(name + count++, attribute, domain, key, rows);
     } // select
 
     /**
@@ -372,7 +338,7 @@ public class IndexTestsTable
      * @author Thomas Nguyen
      * @author Curt Leonard
      */
-    public Table union(IndexTestsTable table2) {
+    /*public Table union(DIndexTable table2) {
         out.println(STR."RA> \{name}.union (\{table2.name})");
         if (!compatible(table2)) {
             return null;
@@ -406,7 +372,7 @@ public class IndexTestsTable
 
             return new Table(name + count++, attribute, domain, key, rows);
         }
-    } // union
+    } // union */
 
     /**
      * **********************************************************************************
@@ -420,7 +386,7 @@ public class IndexTestsTable
      * @author Heeya Jolly
      * @author Curt Leonard
      */
-    public Table minus(IndexTestsTable table2) {
+    /*public Table minus(DIndexTable table2) {
         out.println(STR."RA> \{name}.minus (\{table2.name})");
         if (!compatible(table2)) {
             return null; // null if not compatible 
@@ -446,7 +412,7 @@ public class IndexTestsTable
             return new Table(name + count++, attribute, domain, key, rows);
         }
 
-    } // minus
+    } // minus */
 
     /**
      * **********************************************************************************
@@ -464,7 +430,7 @@ public class IndexTestsTable
      * @return a table with tuples satisfying the equality predicate
      * @author Jason Maurer
      */
-    public Table join(String attributes1, String attributes2, IndexTestsTable table2) {
+    /*public Table join(String attributes1, String attributes2, DIndexTable table2) {
         // out.println(STR."RA> \{name}.join (\{attributes1}, \{attributes2}, \{table2.name})");
 
         var t_attrs = attributes1.split(" ");
@@ -510,7 +476,7 @@ public class IndexTestsTable
 
         return new Table(name + count++, concat(temp_table_1_attributes, table_2_modified_attributes),
                 concat(domain, table2.domain), key, rows);
-    } // join
+    } // join */
 
     /**
      * **********************************************************************************
@@ -527,7 +493,7 @@ public class IndexTestsTable
      * @return a table with tuples satisfying the condition
      * @author Jason Maurer
      */
-    public Table join(String condition, IndexTestsTable table2) {
+    /*public Table join(String condition, DIndexTable table2) {
         out.println(STR."RA> \{name}.join (\{condition}, \{table2.name})");
 
         var rows = new ArrayList<Comparable[]>();
@@ -568,7 +534,7 @@ public class IndexTestsTable
 
         return new Table(name + count++, concat(table_1_temp_attributes, table_2_modified_attributes),
                 concat(domain, table2.domain), key, rows);
-    } // join
+    } // join */
 
     /**
      * **********************************************************************************
@@ -583,7 +549,7 @@ public class IndexTestsTable
      * @param table2 the rhs table in the join operation
      * @return a table with tuples satisfying the equality predicate
      */
-    public Table i_join(String attributes1, String attributes2, IndexTestsTable table2) {
+    public Table i_join(String attributes1, String attributes2, DIndexTable table2) {
 
         // out.println(STR."RA> \{name}.i_join (\{attributes1}, \{attributes2}, \{table2.name})");
 
@@ -591,7 +557,7 @@ public class IndexTestsTable
         var u_attrs = attributes2.split(" ");
         var rows = new ArrayList<Comparable[]>();
 
-        if (table2.mType != MapType.NO_MAP) { // if table 2 has index
+        
 
             for (var t : tuples) { // For every tuple in this table
                 var keyVal = new KeyType(extract(t, t_attrs)); // get the key value wanted 
@@ -619,9 +585,7 @@ public class IndexTestsTable
 
             return new Table(name + count++, concat(tAttrs, uAttrs), concat(domain, table2.domain), key, rows); // return the new table with the concatenated tuples
 
-        } else {
 
-            return join(attributes1, attributes2, table2); // fallback to nested loop join if no index
         }
 
     } // i_join
@@ -638,7 +602,7 @@ public class IndexTestsTable
      * @return a table with tuples satisfying the equality predicate
      * @author Jason Maurer
      */
-    public Table join(IndexTestsTable table2) {
+    /*public Table join(DIndexTable table2) {
         out.println(STR."RA> \{name}.join (\{table2.name})");
 
         var rows = new ArrayList<Comparable[]>();
@@ -718,7 +682,7 @@ public class IndexTestsTable
 
         return new Table(name + count++, concat(table_1_temp_attributes, table_2_condensed_attributes),
                 concat(table_1_temp_domain, table_2_condensed_domains), key, rows);
-    } // join
+    } // join */
 
 /************************************************************************************
      * Return the column position for the given attribute name or -1 if not found.
@@ -846,8 +810,9 @@ public class IndexTestsTable
     public void printIndex() {
         out.println(STR."\n Index for \{name}");
         out.println("-------------------");
-        if (mType != MapType.NO_MAP) {
-            for (var e : index.entrySet()) {
+        
+            for (var e : index) {
+                if (e.getValue() != -1) {
                 out.println(STR."\{e.getKey()} -> \{Arrays.toString(e.getValue())}");
             } // for
         } // if
@@ -881,7 +846,7 @@ public class IndexTestsTable
      * Save this table in a file.
      */
     public void save() {
-        Map<KeyType, Comparable[]> temp_index = this.index;
+        DIndex temp_index = this.index;
         ArrayList<IndexVersionTwo> temp_alternate_indexes = this.alternate_indexes;
         try {
             this.index = null;
@@ -910,7 +875,7 @@ public class IndexTestsTable
      * @param table2 the rhs table
      * @return whether the two tables are compatible
      */
-    private boolean compatible(IndexTestsTable table2) {
+    private boolean compatible(DIndexTable table2) {
         if (domain.length != table2.domain.length) {
             out.println("compatible ERROR: table have different arity");
             return false;
@@ -1091,7 +1056,7 @@ public class IndexTestsTable
      * @param _is_Unique boolean for if the index is unique
      * @author Jason Maurer
      */
-    public IndexVersionTwo create_index(String[] index_key, Boolean _is_Unique) {
+    /*public IndexVersionTwo create_index(String[] index_key, Boolean _is_Unique) {
         if (this.alternate_indexes == null) {
             this.alternate_indexes = new ArrayList<IndexVersionTwo>();
         }
@@ -1105,7 +1070,7 @@ public class IndexTestsTable
         }
 
         return new_index;
-    }
+    } */
 
     /**
      * **********************************************************************************

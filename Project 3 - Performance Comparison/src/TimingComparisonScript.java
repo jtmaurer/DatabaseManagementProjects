@@ -24,7 +24,7 @@ class TimingComparisonScript {
     private static final String EXT = ".dbf";
 
     private enum MapType {
-        NO_MAP, TREE_MAP, HASH_MAP, LINHASH_MAP, BPTREE_MAP
+        NO_MAP, TREE_MAP, HASH_MAP, LINHASH_MAP, BPTREE_MAP, DINDEX_MAP
     }
 
     /**
@@ -272,6 +272,12 @@ class TimingComparisonScript {
         movieExec = generate_table("movieExec", "ten_k", IndexTestsTable.MapType.BPTREE_MAP);
         studio = generate_table("studio", "ten_k", IndexTestsTable.MapType.BPTREE_MAP);
         time_tester(movie, movieExec, studio);
+        //DINDEX_Map
+        movie = generate_table("movie", "ten_k", IndexTestsTable.MapType.DINDEX_MAP);
+        movieExec = generate_table("movieExec", "ten_k", IndexTestsTable.MapType.DINDEX_MAP);
+        studio = generate_table("studio", "ten_k", IndexTestsTable.MapType.DINDEX_MAP);
+
+
 
         // 20K Tuple Test Cases ********************************************************************************************************************
         // NO_MAP 
