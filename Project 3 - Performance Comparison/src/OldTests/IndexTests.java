@@ -16,14 +16,14 @@ class IndexTests {
     public static void main(String[] args) {
         out.println();
 
-        var movie = new Table("movie", "title year length genre studioName producerNo",
-                "String Integer Integer String String Integer", "title year");
+        var movie = new IndexTestsTable("movie", "title year length genre studioName producerNo",
+                "String Integer Integer String String Integer", "title year", IndexTestsTable.MapType.HASH_MAP);
 
-        var cinema = new Table("cinema", "title year length genre studioName producerNo",
-                "String Integer Integer String String Integer", "title year");
+        var cinema = new IndexTestsTable("cinema", "title year length genre studioName producerNo",
+                "String Integer Integer String String Integer", "title year", IndexTestsTable.MapType.HASH_MAP);
 
-        var studio = new Table("studio", "name address presNo",
-                "String String Integer", "name");
+        var studio = new IndexTestsTable("studio", "name address presNo",
+                "String String Integer", "name", IndexTestsTable.MapType.HASH_MAP);
 
         var film0 = new Comparable[]{"Star_Wars", 1977, 124, "sciFi", "Fox", 12345};
         var film1 = new Comparable[]{"Star_Wars_2", 1980, 124, "sciFi", "Fox", 12345};
@@ -35,13 +35,14 @@ class IndexTests {
         cinema.insert(film2);
         cinema.insert(film3);
         cinema.insert(film4);
+        cinema.insert(film4);
         out.println();
         movie.insert(film0);
         movie.insert(film1);
         movie.insert(film2);
         movie.insert(film3);
         movie.print();
-        movie.testTable();
+        // movie.testTable();
         out.println();
         var studio0 = new Comparable [] { "Fox", "Los_Angeles", 7777 };
         var studio1 = new Comparable [] { "Universal", "Universal_City", 8888 };
