@@ -3,6 +3,12 @@ import java.io.*;
 import static java.lang.System.nanoTime;
 import static java.lang.System.out;
 
+/**
+ * The TimingComparisonScript class tests and compares the performance of select and join operations 
+ * on tables using various indexing methods (NO_MAP, TREE_MAP, HASH_MAP, BPTREE_MAP) across tuple 
+ * sets of different sizes (10K to 100K). It loads datasets, generates indexed tables, and times 
+ * each operation, printing average execution times for performance analysis.
+ */
 class TimingComparisonScript {
 
     // "movieExec", "studio", "movie" is order of tables
@@ -104,12 +110,10 @@ class TimingComparisonScript {
                 table_index = 1;
             }
         }
-        // System.out.println("Created new table set");        
 
         for (Comparable[] temp_tup : temp_tups[table_index]) {
             table.insert(temp_tup);
         }
-        // System.out.println("Finished inserts");
 
         return table;
     }
@@ -123,6 +127,8 @@ class TimingComparisonScript {
      * `studio` tables. - Join between the `movie` and `movieExec` tables on
      * "producerNo". - Join between the `movie` and `studio` tables on
      * "studioName".
+     * 
+     * The select test keys were found in the tuples data sets beforehand.
      *
      * @param movie_table The `IndexTestsTable` instance representing the
      * "movie" table.
@@ -179,7 +185,6 @@ class TimingComparisonScript {
             var t0 = nanoTime();
             movieExec_table.select(new KeyType(select_test_key_one));
             var et = (nanoTime() - t0) / 1000;
-            // out.println ("for iteration = " + it + " Arrays.sort time = " + et + " mu-sec");
             if (it > 0) {
                 sum += et;
             }
@@ -191,7 +196,6 @@ class TimingComparisonScript {
             var t0 = nanoTime();
             studio.select(new KeyType(select_test_key_two));
             var et = (nanoTime() - t0) / 1000;
-            // out.println ("for iteration = " + it + " Arrays.sort time = " + et + " mu-sec");
             if (it > 0) {
                 sum += et;
             }
@@ -205,7 +209,6 @@ class TimingComparisonScript {
             var t0 = nanoTime();
             movie_table.i_join("producerNo", "producerNo", movieExec_table);
             var et = (nanoTime() - t0) / 1000;
-            // out.println ("for iteration = " + it + " Arrays.sort time = " + et + " mu-sec");
             if (it > 0) {
                 sum += et;
             }
@@ -218,7 +221,6 @@ class TimingComparisonScript {
             var t0 = nanoTime();
             movie_table.i_join("studioName", "studioName", studio);
             var et = (nanoTime() - t0) / 1000;
-            // out.println ("for iteration = " + it + " Arrays.sort time = " + et + " mu-sec");
             if (it > 0) {
                 sum += et;
             }
@@ -236,20 +238,6 @@ class TimingComparisonScript {
         fifty_k_tuple_set = load("fifty_k_tuple_sets");
         hundred_k_tuple_set = load("hundred_k_tuple_sets");
         System.out.println("Finished loading");
-
-        // System.out.println(Arrays.toString(ten_k_tuple_set[0][5000]));
-        // System.out.println(Arrays.toString(ten_k_tuple_set[1][5000]));
-        // System.out.println(Arrays.toString(twenty_k_tuple_set[0][10000]));
-        // System.out.println(Arrays.toString(twenty_k_tuple_set[1][10000]));
-        // System.out.println(Arrays.toString(thirty_k_tuple_set[0][15000]));
-        // System.out.println(Arrays.toString(thirty_k_tuple_set[1][15000]));
-        // System.out.println(Arrays.toString(forty_k_tuple_set[0][20000]));
-        // System.out.println(Arrays.toString(forty_k_tuple_set[1][20000]));
-        // System.out.println(Arrays.toString(fifty_k_tuple_set[0][25000]));
-        // System.out.println(Arrays.toString(fifty_k_tuple_set[1][25000]));
-        // System.out.println(Arrays.toString(hundred_k_tuple_set[0][50000]));
-        // System.out.println(Arrays.toString(hundred_k_tuple_set[1][50000]));
-        // return;
 
         // 10K Tuple Test Cases ********************************************************************************************************************
         // NO_MAP 
