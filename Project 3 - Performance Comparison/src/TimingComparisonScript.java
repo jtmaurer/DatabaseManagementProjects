@@ -4,10 +4,11 @@ import static java.lang.System.nanoTime;
 import static java.lang.System.out;
 
 /**
- * The TimingComparisonScript class tests and compares the performance of select and join operations 
- * on tables using various indexing methods (NO_MAP, TREE_MAP, HASH_MAP, BPTREE_MAP) across tuple 
- * sets of different sizes (10K to 100K). It loads datasets, generates indexed tables, and times 
- * each operation, printing average execution times for performance analysis.
+ * The TimingComparisonScript class tests and compares the performance of select
+ * and join operations on tables using various indexing methods (NO_MAP,
+ * TREE_MAP, HASH_MAP, BPTREE_MAP) across tuple sets of different sizes (10K to
+ * 100K). It loads datasets, generates indexed tables, and times each operation,
+ * printing average execution times for performance analysis.
  */
 class TimingComparisonScript {
 
@@ -78,6 +79,7 @@ class TimingComparisonScript {
         Comparable[][][] temp_tups;
         int table_index;
 
+        //Determine num of tuples
         temp_tups = switch (tuple_count) {
             case "ten_k" ->
                 ten_k_tuple_set;
@@ -93,6 +95,7 @@ class TimingComparisonScript {
                 hundred_k_tuple_set;
         };
 
+        //Determine table type
         switch (table_name) {
             case "movie" -> {
                 table = new IndexTestsTable("movie", "title year length genre studioName producerNo",
@@ -127,7 +130,7 @@ class TimingComparisonScript {
      * `studio` tables. - Join between the `movie` and `movieExec` tables on
      * "producerNo". - Join between the `movie` and `studio` tables on
      * "studioName".
-     * 
+     *
      * The select test keys were found in the tuples data sets beforehand.
      *
      * @param movie_table The `IndexTestsTable` instance representing the
@@ -138,11 +141,11 @@ class TimingComparisonScript {
      * table.
      */
     static void time_tester(IndexTestsTable movie_table, IndexTestsTable movieExec_table, IndexTestsTable studio) {
-        // Select cases
         Comparable select_test_key_one;
         Comparable select_test_key_two;
         int num_tups = movieExec_table.getTupleLength();
 
+        // Find the appropriate keys for select
         switch (num_tups) {
             case 10000 -> {
                 select_test_key_one = 547043; //movieExec - producerNo
@@ -179,7 +182,8 @@ class TimingComparisonScript {
         }
 
         System.out.println(num_tups + ", " + movie_table.mType + " Timing Test cases");
-
+      
+        // Select cases
         var sum = 0;
         for (var it = 0; it < 6; it++) {
             var t0 = nanoTime();
