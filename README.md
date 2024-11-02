@@ -66,4 +66,4 @@ javac -d bin --enable-preview --release 22 src/*.java
 - Thomas Nguyen- Compiled all the data that was given to him and jotted the data into the software to be able to graph them. Made four columns for each map and plotted them on a graph. Generated a line of best fit for each of the cases of select case 1, select case 2, join case 1, and join case 2. Then made them all logarithmic graphs.
 
 # Documentation
-For a detailed explanation of our project, key features,implementations, indexes, and performance testing, and conculsion please refer to the documentation file named 'Documentation.pdf'.
+For a detailed explanation of our project and report.txt, key features,implementations, indexes, and performance testing, and conculsion please refer to the documentation file named 'Documentation.pdf'.
