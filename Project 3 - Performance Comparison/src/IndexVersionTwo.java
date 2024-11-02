@@ -23,15 +23,17 @@ public class IndexVersionTwo {
 
     /**
      * **********************************************************************************
-     * Construct an index, given parameters isUnique, index_key, and the empty new_map.
-     * 
-     * Parameter table represents the table the index will get key column numbers, and
-     * get tuples from (if needed).
-     * 
-     * In the case of the index being unique, a hashset is created to check for duplicate
-     * keys.
-     * 
-     * PopulateMap() is called in case the table already has tuples that must be indexed. 
+     * Construct an index, given parameters isUnique, index_key, and the empty
+     * new_map.
+     *
+     * Parameter table represents the table the index will get key column
+     * numbers, and get tuples from (if needed).
+     *
+     * In the case of the index being unique, a hashset is created to check for
+     * duplicate keys.
+     *
+     * PopulateMap() is called in case the table already has tuples that must be
+     * indexed.
      *
      * @param new_map the empty map passed in
      * @param table the table the index is being made for
@@ -60,8 +62,8 @@ public class IndexVersionTwo {
 
     /**
      * **********************************************************************************
-     * Inserts tuple into index, checking if the key value is repeated if the index is 
-     * unique. 
+     * Inserts tuple into index, checking if the key value is repeated if the
+     * index is unique.
      *
      * @param tuple the tuple to insert
      */
@@ -86,7 +88,7 @@ public class IndexVersionTwo {
 
     /**
      * **********************************************************************************
-     * Inserts existing tuples from table into index. 
+     * Inserts existing tuples from table into index.
      */
     private void populateMap() {
         if (!this.table.getTuples().isEmpty()) {

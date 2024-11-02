@@ -24,8 +24,8 @@ import java.lang.reflect.Array;
 
 /**
  * **************************************************************************************
- * Copy of table class, but has changes such as being able to set the map type through construction,
- * among other changes to make testing more convenient.
+ * Copy of table class, but has changes such as being able to set the map type
+ * through construction, among other changes to make testing more convenient.
  */
 public class IndexTestsTable
         implements Serializable {
@@ -188,7 +188,7 @@ public class IndexTestsTable
     public IndexTestsTable(String _name, String attributes, String domains, String _key, MapType mType) {
         this(_name, attributes.split(" "), findClass(domains.split(" ")), _key.split(" "), mType);
 
-      //  System.out.println("DDL> create table \{name} (\{attributes})");
+        //  System.out.println("DDL> create table \{name} (\{attributes})");
     } // constructor
 
     //----------------------------------------------------------------------------------
@@ -352,9 +352,9 @@ public class IndexTestsTable
                 rows.add(t); // If the tuple exists add it to rows
             }
         } else {
-            return select(key[0] + " == " + keyVal.toStringTesting());  
+            return select(key[0] + " == " + keyVal.toStringTesting());
         }
-            // ? I Think this is everything i need to do but not sure until indexing is done. 
+        // ? I Think this is everything i need to do but not sure until indexing is done. 
         // ? Because this is just looking at the key value of the index, there shouldnt be a need to loop because the index won't have duplicates.
 
         return new IndexTestsTable(name + count++, attribute, domain, key, rows, mType);
@@ -372,7 +372,8 @@ public class IndexTestsTable
      * @author Curt Leonard
      */
     public Table union(IndexTestsTable table2) {
-        out.println(STR."RA> \{name}.union (\{table2.name})");
+        out.println(STR.
+        "RA> \{name}.union (\{table2.name})");
         if (!compatible(table2)) {
             return null;
         }
@@ -420,7 +421,8 @@ public class IndexTestsTable
      * @author Curt Leonard
      */
     public Table minus(IndexTestsTable table2) {
-        out.println(STR."RA> \{name}.minus (\{table2.name})");
+        out.println(STR.
+        "RA> \{name}.minus (\{table2.name})");
         if (!compatible(table2)) {
             return null; // null if not compatible 
         }
@@ -527,7 +529,8 @@ public class IndexTestsTable
      * @author Jason Maurer
      */
     public Table join(String condition, IndexTestsTable table2) {
-        out.println(STR."RA> \{name}.join (\{condition}, \{table2.name})");
+        out.println(STR.
+        "RA> \{name}.join (\{condition}, \{table2.name})");
 
         var rows = new ArrayList<Comparable[]>();
         var condition_array = condition.split(" ");
@@ -585,7 +588,6 @@ public class IndexTestsTable
     public Table i_join(String attributes1, String attributes2, IndexTestsTable table2) {
 
         // out.println(STR."RA> \{name}.i_join (\{attributes1}, \{attributes2}, \{table2.name})");
-
         var t_attrs = attributes1.split(" ");
         var u_attrs = attributes2.split(" ");
         var rows = new ArrayList<Comparable[]>();
@@ -638,7 +640,8 @@ public class IndexTestsTable
      * @author Jason Maurer
      */
     public Table join(IndexTestsTable table2) {
-        out.println(STR."RA> \{name}.join (\{table2.name})");
+        out.println(STR.
+        "RA> \{name}.join (\{table2.name})");
 
         var rows = new ArrayList<Comparable[]>();
 
@@ -719,16 +722,19 @@ public class IndexTestsTable
                 concat(table_1_temp_domain, table_2_condensed_domains), key, rows);
     } // join
 
-/************************************************************************************
-     * Return the column position for the given attribute name or -1 if not found.
+    /**
+     * **********************************************************************************
+     * Return the column position for the given attribute name or -1 if not
+     * found.
      *
-     * @param attr  the given attribute name
-     * @return  a column position
+     * @param attr the given attribute name
+     * @return a column position
      */
-    public int col (String attr)
-    {
+    public int col(String attr) {
         for (var i = 0; i < attribute.length; i++) {
-           if (attr.equals (attribute [i])) return i;
+            if (attr.equals(attribute[i])) {
+                return i;
+            }
         } // for
 
         return -1;       // -1 => not found
@@ -777,15 +783,15 @@ public class IndexTestsTable
         } // if
     } // insert
 
-/************************************************************************************
+    /**
+     * **********************************************************************************
      * Get the tuple at index position i.
      *
-     * @param i  the index of the tuple being sought
-     * @return  the tuple at index position i
+     * @param i the index of the tuple being sought
+     * @return the tuple at index position i
      */
-    public Comparable [] get (int i)
-    {
-        return tuples.get (i);
+    public Comparable[] get(int i) {
+        return tuples.get(i);
     } // get
 
     /**
@@ -798,15 +804,18 @@ public class IndexTestsTable
         return name;
     } // getName
 
-/************************************************************************************
+    /**
+     * **********************************************************************************
      * Print tuple tup.
-     * @param tup  the array of attribute values forming the tuple
+     *
+     * @param tup the array of attribute values forming the tuple
      */
-    public void printTup (Comparable [] tup)
-    {
-        out.print ("| ");
-        for (var attr : tup) out.printf ("%15s", attr);
-        out.println (" |");
+    public void printTup(Comparable[] tup) {
+        out.print("| ");
+        for (var attr : tup) {
+            out.printf("%15s", attr);
+        }
+        out.println(" |");
     } // printTup
 
     /**
@@ -814,7 +823,8 @@ public class IndexTestsTable
      * Print this table.
      */
     public void print() {
-        out.println(STR."\n Table \{name}");
+        out.println(STR.
+        "\n Table \{name}");
         out.print("|-");
         out.print("---------------".repeat(attribute.length));
         out.println("-|");
@@ -843,11 +853,15 @@ public class IndexTestsTable
      * Print this table's index (Map).
      */
     public void printIndex() {
-        out.println(STR."\n Index for \{name}");
+        out.println(STR.
+        "\n Index for \{name}");
         out.println("-------------------");
         if (mType != MapType.NO_MAP) {
             for (var e : index.entrySet()) {
-                out.println(STR."\{e.getKey()} -> \{Arrays.toString(e.getValue())}");
+                out.println(STR.
+        
+        
+            "\{e.getKey()} -> \{Arrays.toString(e.getValue())}");
             } // for
         } // if
         out.println("-------------------");
@@ -916,7 +930,8 @@ public class IndexTestsTable
         } // if
         for (var j = 0; j < domain.length; j++) {
             if (domain[j] != table2.domain[j]) {
-                out.println(STR."compatible ERROR: tables disagree on domain \{j}");
+                out.println(STR.
+                "compatible ERROR: tables disagree on domain \{j}");
                 return false;
             } // if
         } // for
@@ -942,7 +957,10 @@ public class IndexTestsTable
                 } // for
             } // for
             if (!matched) {
-                out.println(STR."match: domain not found for \{column[j]}");
+                out.println(STR.
+        
+        
+            "match: domain not found for \{column[j]}");
             }
         } // for
 
@@ -1012,9 +1030,13 @@ public class IndexTestsTable
 
         for (var i = 0; i < className.length; i++) {
             try {
-                classArray[i] = Class.forName(STR."java.lang.\{className[i]}");
+                classArray[i] = Class.forName(STR. 
+            "java.lang.\{className[i]}");
             } catch (ClassNotFoundException ex) {
-                System.out.println(STR."findClass: \{ex}");
+                System.out.println(STR.
+        
+        
+            "findClass: \{ex}");
             } // try
         } // for
 
@@ -1053,10 +1075,8 @@ public class IndexTestsTable
     //             return i;
     //         }
     //     } // for
-
     //     return -1;       // -1 => not found
     // } // col
-
     /**
      * **********************************************************************************
      * Finds the existing index with a key of index_key and a 'Uniqueness'
@@ -1143,8 +1163,6 @@ public class IndexTestsTable
     //     n = null;
     //     n = this.find_index(new String[]{"year", "length"}, true);
     //     System.out.println(Arrays.toString(n.index_lookup(new KeyType(key_test))));
-
     // }
-
 } // Table
 
