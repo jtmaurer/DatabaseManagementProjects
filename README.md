@@ -61,9 +61,9 @@ javac -d bin --enable-preview --release 22 src/*.java
 # Contributions
 - Ridhima Reddy- Ran test cases, wrote documentation and readme, tested functionality, and analyzed all the graphs.
 - Curt Leonard- Implemented DIndex and developed some scripts, and tested tuple operations.
-- Heeya Jolly- Implemented the tuple generator to compare performance of the maps
-- Jason Todd Maurer-Designed and implemented test cases for select and join operations. 
-- Thomas Nguyen- Plotted all the graphs, added selection cases.
+- Heeya Jolly- Added the tuple Generator, which randomly generated large number of tuples. It generates tuples (rows) based on the schema of a table, which specifies column names, data types, and other constraints. This allows for automated creation of data rows to populate tables for testing, simulations, or general use. 
+- Jason Todd Maurer-Designed and implemented test cases for select and join operations. created tuple data sets for different amounts of total tuples (10-100K).
+- Thomas Nguyen- Compiled all the data that was given to him and jotted the data into the software to be able to graph them. Made four columns for each map and plotted them on a graph. Generated a line of best fit for each of the cases of select case 1, select case 2, join case 1, and join case 2. Then made them all logarithmic graphs.
 
 # Documentation
 For a detailed explanation of our project, key features,implementations, indexes, and performance testing, and conculsion please refer to the documentation file named 'Documentation.pdf'.
